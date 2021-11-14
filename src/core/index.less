@@ -1,0 +1,72 @@
+/*=============no blue selection color=================*/
+* {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	box-sizing: border-box;
+	&::after, &::before {
+		box-sizing: border-box;
+	}
+
+	body {
+
+		[data-weditor-container] {
+			height: 50vh;
+			border: 2px solid #8e8e8e;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+		
+		.ProseMirror {
+			position: relative;
+			word-wrap: break-word;
+			white-space: pre-wrap;
+			white-space: break-space;
+			font-variant-ligatures: none;
+			font-feature-settings: "liga" 0;
+	
+			pre {
+				white-space: pre-wrap;
+			}
+	
+			li {
+				position: relative;
+			}
+		}
+	
+		.ProseMirror-focused {
+			outline: none;
+		}
+	
+		.ProseMirror-hideselection {
+			*::selection {
+				background: transparent;
+			}
+	
+			*::-moz-selection {
+				background: transparent;
+			}
+		}
+	
+	
+		// li {
+			.ProseMirror-selectednode {
+				outline: none;
+				border: 2px solid #8cf;
+	
+			// 	&::after {
+			// 		content: "";
+			// 		position: absolute;
+			// 		left: -32px;
+			// 		right: -2px;
+			// 		top: -2px;
+			// 		bottom: -2px;
+			// 		pointer-events: none;
+			// 	}
+			}
+		// }
+
+	}
+	
+}

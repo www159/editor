@@ -1,0 +1,13 @@
+{
+    "extends": "../../tsconfig.json",
+    "include": ["./**/*.ts", "./**/*.tsx"],
+    "exclude": ["node_module"],
+    "compilerOptions": {
+        "resolveJsonModule": true,
+        "baseUrl": ".",
+        "paths": {
+            "@editor": ["./src"],
+            "@editor/*": ["./src/*"],
+        }
+    }
+}

@@ -1,0 +1,22 @@
+diff --git a/node_modules/@types/prosemirror-transform/index.d.ts b/node_modules/@types/prosemirror-transform/index.d.ts
+index 8f357d1..c22f84e 100644
+--- a/node_modules/@types/prosemirror-transform/index.d.ts
++++ b/node_modules/@types/prosemirror-transform/index.d.ts
+@@ -301,7 +301,7 @@ export class Transform<S extends Schema = any> {
+     split(
+         pos: number,
+         depth?: number,
+-        typesAfter?: Array<{ type: NodeType<S>; attrs?: { [key: string]: any } | null | undefined }>,
++        typesAfter?: Array<{ type: NodeType<S>; attrs?: { [key: string]: any } | null | undefined } | null> | null,
+     ): this;
+     /**
+      * Join the blocks around the given position. If depth is 2, their
+@@ -516,7 +516,7 @@ export function canSplit<S extends Schema = any>(
+     doc: ProsemirrorNode<S>,
+     pos: number,
+     depth?: number,
+-    typesAfter?: Array<{ type: NodeType<S>; attrs?: { [key: string]: any } | null | undefined } | null | undefined>,
++    typesAfter?: Array<{ type: NodeType<S>; attrs?: { [key: string]: any } | null | undefined } | null | undefined> | null,
+ ): boolean;
+ /**
+  * Test whether the blocks before and after a given position can be
