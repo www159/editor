@@ -74,15 +74,17 @@ export class ExtensionResolver {
     get plugins(): Array<Plugin> {
         return this.extensions
         .map(extension => {
+            const { type } = extension
             let plugins = new Array<Plugin>()
             //绑定nodetype | marktype
             // if(extension.type !== 'PLUGIN') {
+                
                 plugins = plugins.concat(bindFunc(extension, {
                     editor: this.editor,
-                    type: getType(extension.type === 'MARK' ? 
+                    type: getType(type === 'MARK' ? 
                                     extension.mark as MarkSpec : 
                                     extension.node as NodeSpec, 
-                                    this.schema)
+                                    this.schema, type)
                 }))
             // }
 

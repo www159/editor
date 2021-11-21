@@ -3,6 +3,7 @@ import { NodeSpec, Schema } from 'prosemirror-model'
 export type {
     Extension,
     DispatchFunc,
+    PluginView,
     Extensions,
     ExtensionType,
     Realize,

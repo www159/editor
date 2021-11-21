@@ -10,13 +10,14 @@ import { InputRule, inputRules } from 'prosemirror-inputrules'
 import { getClipboardTextSerializer } from './common/clipboardTextSerializer'
 import { ExtensionResolver } from './extensionResolver'
 import { elementFromString } from './utils/elementFromString'
-import { isConstTypeReference } from 'typescript'
+// import { isConstTypeReference } from 'typescript'
 
 export class Editor extends EventEmitter  {
 
     private options: EditorOptions = {
         dom: document.createElement('div'),
         content: '',
+        json: null,
         extensions: new Array<Extension>(),
         onCreate: () => null,
         onUpdate: () => null,
@@ -68,13 +69,15 @@ export class Editor extends EventEmitter  {
         // plugins.push(getClipboardTextSerializer(schema))
         // console.log(plugins)
         this.schema = schema
-        console.log(elementFromString(this.options.content))
+        // console.log(elementFromString(this.options.content))
         this.view = new EditorView(this.options.dom, {
             state: EditorState.create({
-                doc: DOMParser.fromSchema(this.schema).parse(elementFromString(this.options.content)),
+                doc: this.options.json ? this.schema.nodeFromJSON(this.options.json) : DOMParser.fromSchema(this.schema).parse(elementFromString(this.options.content)),
             }),
             dispatchTransaction: this.dispatchInner.bind(this)
         })
+
+        // console.log(this.state.doc.toJSON())
 
         /**
          * @todo 需要内部粘贴板交给底层

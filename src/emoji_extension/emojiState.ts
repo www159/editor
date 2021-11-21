@@ -35,7 +35,6 @@ export const emojiPlugin = new Plugin<EmojiState>({
     },
     apply(tr, emojiState) {
       const { activeEmojiViews } = emojiState
-      console.log(activeEmojiViews)
       const meta = tr.getMeta(this)
 
       if(meta) {

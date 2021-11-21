@@ -34,6 +34,12 @@ export function reactDomAttach<P>(Component_: ComponentType<P>, props: P, father
     return son
 }
 
+export function reactDirAttach<P>(Compnent_: ComponentType<P>, props: P, dom: HTMLElement) {
+    return new Promise<HTMLElement>(res => {
+        ReactDOM.render(<Compnent_ {...props}/>, dom, () => res(dom))
+    })
+}
+
 export function reactDomUnattach(node: Node) {
     const result = ReactDOM.unmountComponentAtNode(node as Element)
 }
@@ -56,4 +62,10 @@ export function serialCommands(...commands: Command[]) {
         }
         return true
     }
+}
+
+export function attachGlobal(view: EditorView, dom: Node) {
+    const father = view.dom.parentNode
+    if(father) father.appendChild(dom)
+    return dom
 }

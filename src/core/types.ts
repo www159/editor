@@ -3,7 +3,6 @@ import { MenuItem } from "prosemirror-menu";
 import { NodeSpec, NodeType, MarkSpec, Node, MarkType, Mark } from "prosemirror-model";
 import { NodeSelection, Plugin, Transaction } from "prosemirror-state";
 import { Command, Keymap } from "prosemirror-commands";
-import { NodesVisitor } from "typescript";
 import { Editor } from ".";
 
 /*********************************** model-fixed ***********************************/
