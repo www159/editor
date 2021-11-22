@@ -1,0 +1,79 @@
+diff --git a/node_modules/@types/prosemirror-state/index.d.ts b/node_modules/@types/prosemirror-state/index.d.ts
+index 327fecc..54c8288 100644
+--- a/node_modules/@types/prosemirror-state/index.d.ts
++++ b/node_modules/@types/prosemirror-state/index.d.ts
+@@ -16,7 +16,7 @@ import { EditorProps, EditorView } from 'prosemirror-view';
+  * This is the type passed to the [`Plugin`](#state.Plugin)
+  * constructor. It provides a definition for a plugin.
+  */
+-export interface PluginSpec<T = any, S extends Schema = any> {
++export interface PluginSpec<T = any, S extends Schema = any, A extends IMeta[] = any> {
+     /**
+      * The [view props](#view.EditorProps) added by this plugin. Props
+      * that are functions will be bound to have the plugin instance as
+@@ -34,7 +34,7 @@ export interface PluginSpec<T = any, S extends Schema = any> {
+      * access the plugin's configuration and state through the key,
+      * without having access to the plugin instance object.
+      */
+-    key?: PluginKey<T, S> | null | undefined;
++    key?: PluginKey<T, S, A> | null | undefined;
+     /**
+      * When the plugin needs to interact with the editor view, or
+      * set something up in the DOM, use this field. The function
+@@ -76,11 +76,11 @@ export interface PluginSpec<T = any, S extends Schema = any> {
+  * They are part of the [editor state](#state.EditorState) and
+  * may influence that state and the view that contains it.
+  */
+-export class Plugin<T = any, S extends Schema = any> {
++export class Plugin<T = any, S extends Schema = any, A extends IMeta[] = any> {
+     /**
+      * Create a plugin.
+      */
+-    constructor(spec: PluginSpec<T, S>);
++    constructor(spec: PluginSpec<T, S, A>);
+     /**
+      * The [props](#view.EditorProps) exported by this plugin.
+      */
+@@ -132,7 +132,7 @@ export interface StateField<T = any, S extends Schema = Schema> {
+  * editor state. Assigning a key does mean only one plugin of that
+  * type can be active in a state.
+  */
+-export class PluginKey<T = any, S extends Schema = any> {
++export class PluginKey<T = any, S extends Schema = any, A extends IMeta[] = any> {
+     /**
+      * Create a plugin key.
+      */
+@@ -141,7 +141,7 @@ export class PluginKey<T = any, S extends Schema = any> {
+      * Get the active plugin with this key, if any, from an editor
+      * state.
+      */
+-    get(state: EditorState<S>): Plugin<T, S> | null | undefined;
++    get(state: EditorState<S>): Plugin<T, S, A> | null | undefined;
+     /**
+      * Get the plugin's state from an editor state.
+      */
+@@ -569,11 +569,11 @@ export class Transaction<S extends Schema = any> extends Transform<S> {
+      * Store a metadata property in this transaction, keyed either by
+      * name or by plugin.
+      */
+-    setMeta(key: string | Plugin<any, S> | PluginKey<any, S>, value: any): Transaction;
++    setMeta<A extends IMeta[] = any>(key: string | Plugin<any, S, A> | PluginKey<any, S, A>, value: A[keyof A]): Transaction;
+     /**
+      * Retrieve a metadata property for a given name or plugin.
+      */
+-    getMeta(key: string | Plugin<any, S> | PluginKey<any, S>): any;
++    getMeta<A extends IMeta[] = any>(key: string | Plugin<any, S> | PluginKey<any, S>): A[keyof A];
+     /**
+      * Returns true if this transaction doesn't contain any metadata,
+      * and can thus safely be extended.
+@@ -585,3 +585,10 @@ export class Transaction<S extends Schema = any> extends Transform<S> {
+      */
+     scrollIntoView(): Transaction;
+ }
++
++export interface IMeta {
++    action: string
++    payload: {
++        [key: string]: any
++    }
++}

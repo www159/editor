@@ -46,6 +46,9 @@ export type shortcutKeyFunc = (this: {
     type: NodeType | MarkType | null,
 }) => Keymap
 
+export type wrappedPluginFunc = (this: {
+    editor: Editor,
+}) => Array<Plugin>
 /*********************************** basic event ***********************************/
 
 interface BasicEvent {
@@ -66,6 +69,8 @@ export interface Extension extends Partial<BasicEvent> {
     inputRules?: InputRulesFunc
 
     shortcutKey?: shortcutKeyFunc
+
+    wrappedPlugin?: wrappedPluginFunc
 
     priority?: number
 
@@ -93,5 +98,4 @@ export type ExtensionType = 'MARK' | 'NODE' | 'PLUGIN'
 
 // export type GnlCommands = Record<string, (...args: any[]) => Command>
 
-/*********************************** node attr ***********************************/
-
+/*********************************** Meta Action And Payload ***********************************/

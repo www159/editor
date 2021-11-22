@@ -8,7 +8,7 @@ import { StepMap } from 'prosemirror-transform'
 import { EventEmitter } from '../core'
 import { collaspeMathCmd } from './commands/collapseMathCmd';
 import { MathPluginState, MATH_PLUGIN_KEY } from './mathPlugin';
-import { MathPreviewMeta, MATH_PREVIEW_KEY } from './plugins/mathPreview';
+import {  MATH_PREVIEW_KEY } from './plugins/mathPreview';
 import { deConsView } from '@editor/utils';
 // import { createMathPreviewPlugin, MATH_PREVIEW_KEY } from './plugins/mathPreview';
 
@@ -184,7 +184,7 @@ export class MathView extends EventEmitter implements NodeView, CursorPosObserve
                     this.innerView.dispatch(
                         state.tr
                         .replace(start, endB, node.slice(start, endA))
-                        .setMeta(MATH_PLUGIN_KEY, true))
+                        .setMeta(MATH_PLUGIN_KEY, { action: 'in node view', payload: { random: true } }))
                 }
             }
         }
@@ -242,10 +242,12 @@ export class MathView extends EventEmitter implements NodeView, CursorPosObserve
             outerDispatch(outerTr.setMeta(
                 MATH_PREVIEW_KEY,
                 {
-                    type: 'ADD',
-                    pos: this.getPos(),
-                    katexDOM: this.renderKatex(this.katexDiv, false, innerTr.doc)
-                } as MathPreviewMeta
+                    action: 'ADD',
+                    payload: {
+                        pos: this.getPos(),
+                        katexDOM: this.renderKatex(this.katexDiv, false, innerTr.doc)
+                    }
+                }
             ))
         }
 
@@ -363,10 +365,12 @@ export class MathView extends EventEmitter implements NodeView, CursorPosObserve
         outerDispatch(outerTr.setMeta(
             MATH_PREVIEW_KEY,
             {
-                type: 'REMOVE',
-                pos: this.getPos(),
-                katexDOM: this.katexDiv
-            } as MathPreviewMeta
+                action: 'REMOVE',
+                payload: {
+                    pos: this.getPos(),
+                    katexDOM: this.katexDiv
+                }   
+            }
         ))
         this.isEditing = false
     }
@@ -383,8 +387,9 @@ export class MathView extends EventEmitter implements NodeView, CursorPosObserve
             outerDispatch(outerTr.setMeta(
                 MATH_PREVIEW_KEY,
                 {
-                    type: 'MODIFY',
-                } as MathPreviewMeta,
+                    action: 'MODIFY',
+                    payload: {}
+                },
             ))
         }
 

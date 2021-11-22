@@ -54,7 +54,7 @@ export const emojiPlugin = new Plugin<EmojiState>({
   },
   props: {
     nodeViews: {
-      "emoji": createEmojiView
+      "emoji": (node, ...args) => createEmojiView(node as pmNode, args[0], args[1])
     },
 
     // handleDOMEvents: {

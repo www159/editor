@@ -22,5 +22,9 @@ export function bindFunc(extension: Extension, context: {
         )
     }
 
+    if(extension.wrappedPlugin) {
+        plugins = plugins.concat(extension.wrappedPlugin.apply(context))
+    }
+
     return plugins
 }

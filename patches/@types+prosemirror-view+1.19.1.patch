@@ -1,0 +1,23 @@
+diff --git a/node_modules/@types/prosemirror-view/index.d.ts b/node_modules/@types/prosemirror-view/index.d.ts
+index c2c9580..ae0eccc 100644
+--- a/node_modules/@types/prosemirror-view/index.d.ts
++++ b/node_modules/@types/prosemirror-view/index.d.ts
+@@ -9,7 +9,7 @@
+ // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+ // TypeScript Version: 3.0
+ 
+-import { DOMParser, DOMSerializer, Node as ProsemirrorNode, ResolvedPos, Slice, Schema, Mark } from 'prosemirror-model';
++import { DOMParser, DOMSerializer, Node as ProsemirrorNode, ResolvedPos, Slice, Schema, Mark, pmNode } from 'prosemirror-model';
+ import { EditorState, Selection, Transaction } from 'prosemirror-state';
+ import { Mapping } from 'prosemirror-transform';
+ 
+@@ -585,7 +585,8 @@ export interface EditorProps<ThisT = unknown, S extends Schema = any> {
+     nodeViews?:
+         | {
+               [name: string]: (
+-                  node: ProsemirrorNode<S>,
++                  node: ProsemirrorNode<S> | Mark<S>,
++                //   node: pmNode<S>,
+                   view: EditorView<S>,
+                   getPos: (() => number) | boolean,
+                   decorations: Decoration[],

@@ -61,8 +61,8 @@ export const mathPlugin = new Plugin<MathPluginState>({
 
     props:  {
         nodeViews: {
-            'math_inline': createMathView(displayMode.inline),
-            'math_display': createMathView(displayMode.display),
+            'math_inline':(node, ...args) => createMathView(displayMode.inline)(node as pmNode, args[0], args[1]),
+            'math_display': (node, ...args) => createMathView(displayMode.display)(node as pmNode, args[0], args[1]),
         },
     },
 })

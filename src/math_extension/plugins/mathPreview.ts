@@ -9,18 +9,6 @@ import { Decoration, DecorationSet } from "prosemirror-view";
  */
 export const MATH_PREVIEW_KEY = new PluginKey('prosemirror math preview')
 export const PREVIEW_WIDGET_KEY = 'prosemirror math preview'
-/**
- * Meta交流接口。
- * @param type: 删除还是增加
- * @param pos: 公式节点的位置 
- * @param katexDOM: 由公式节点渲染好的katex节点。
- */
-export interface MathPreviewMeta {
-    type: 'ADD' | 'REMOVE' | 'MODIFY'
-    pos: number
-    katexDOM: HTMLElement
-    
-} 
 /**通过公式节点的setMeta来调用apply
  * 因为每次只能点开一个公式节点。所以
  * `decoration`唯一。 
@@ -54,11 +42,12 @@ export const mathPreviewPlugin = new Plugin<DecorationSet>({
         },
         apply(tr, decoSet ) {
             decoSet.map(tr.mapping, tr.doc)
-            let action: MathPreviewMeta = tr.getMeta(MATH_PREVIEW_KEY)
-            if(!action) return decoSet
-            let { pos, type, katexDOM } = action
-            switch(type) {
+            const meta = tr.getMeta(MATH_PREVIEW_KEY)
+            if(!meta) return decoSet
+            const { action, payload } = meta
+            switch(action) {
                 case 'ADD':  {
+                    const { pos, katexDOM } = payload
                     return decoSet = decoSet.add(
                         tr.doc,
                         [Decoration.widget(pos, katexDOM, {
@@ -70,6 +59,7 @@ export const mathPreviewPlugin = new Plugin<DecorationSet>({
                     return decoSet
                 }
                 case 'REMOVE': {
+                    const { pos, katexDOM } = payload
                     let removeDeco = decoSet.find(undefined, undefined, deco => deco.key === PREVIEW_WIDGET_KEY)
                     return decoSet = decoSet.remove(removeDeco)
                 }

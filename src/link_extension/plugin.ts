@@ -1,149 +1,92 @@
-import { EventEmitter, Realize } from "@editor/core";
-import { deConsView } from "@editor/utils";
-import { Mark, pmNode, ResolvedPos } from "prosemirror-model";
-import { Plugin, PluginKey } from "prosemirror-state";
-import { LinkView } from './LinkView'
-
-interface linkPluginState {
-    pos: number | null
-    activeMark: Mark | null
-    activeAnchor: HTMLAnchorElement | null
-    emitter: EventEmitter | null
-}
+import { Editor, EventEmitter } from "@editor/core";
+import { Mark, pmMark, Schema } from "prosemirror-model";
+import { IMeta, Meta, Plugin, PluginKey, Transaction } from "prosemirror-state";
+import { EditorView } from "prosemirror-view";
+import { LinkView } from "./linkView";
 
 export const LINK_PLUGIN_KEY = new PluginKey('link plugin key')
 
-let flushMark = new Mark()
+interface linkPluginState {
+    activeMark: Mark | null
+    activeDom: HTMLAnchorElement | null
+    emitter: EventEmitter | null
+}
 
-export const linkPlugin = new Plugin<linkPluginState>({
+export const enum duckMap {
+    create_mark = 'create mark',
+    test = 'test'
+}
 
-    key: LINK_PLUGIN_KEY,
+type duckEnum = typeof duckMap
 
-    state: {
-        init: () => ({
-            pos: null,
-            activeMark: null,
-            activeAnchor: null,
-            emitter: null,
-        }),
-        apply: (tr, value, __, newState) => {
+type keys = keyof duckEnum
 
-            //转发事件
-            const meta = tr.getMeta(LINK_PLUGIN_KEY)
-            if(meta) {
-                const { action, payload } = meta
-                switch(action) {
 
-                    //创建linkView
-                    case 'create view': {
-                        const { view } = payload
-                        return {
-                            ...value,
-                            emitter: view
-                        }
-                    }
 
-                    //退出input设置href
-                    case 'set href': {
-                        const { href } = payload
-                        const { activeMark } = value 
-                        if(activeMark) {
-                            flushMark = activeMark
-                            activeMark.attrs.href = href
-                            console.log('setting href', href)
-                            return {
-                                ...value,
-                                activeMark,
-                            }
-                        }
+type linkActionMap = {
+    [duckMap.create_mark]: {
+        activeDom: HTMLAnchorElement
+        activeMark: pmMark
+    }
+    [duckMap.test]: {
+        nouse: true
+    }
+}
 
-                    }
-                    default: return value
+interface linkDuckAction {
+    map: typeof duckMap
+    meta: linkActionMap
+}
+
+export function createLinkPlugin(editor: Editor) {
+    return new Plugin<linkPluginState, Schema, linkDuckAction>({
+
+        key: LINK_PLUGIN_KEY,
+    
+        state: {
+            init(_, __) {
+                return {
+                    activeMark: null,
+                    activeDom: null, 
+                    emitter: editor,
+                }
+            },
+            apply(tr, value, _, newState) {
+                
+                const meta = tr.getMeta(this)
+                if(meta) return reducer(meta, value)
+                
+                return value
+            },
+        },
+    
+        props: {
+            nodeViews: {
+                link: (mark, view) => {
+                    return new LinkView(mark as pmMark, view, editor)
                 }
             }
+        }
+    })
+}
 
-            //更改选区
-            const { selection: { $from } } = newState
-
-            console.log($from.marks())
-            let activeMark: Mark = new Mark()
-            let isAnchor = $from.marks().some(mark => {
-                activeMark = mark
-                return mark.type.name === 'link'
-            })
-            // console.log('anchor', isAnchor)
-            // console.log('mark', activeMark)
-            console.log('out', isAnchor)
-            if(isAnchor) {
-                console.log('in', activeMark)
-                let pos = $from.pos
-                for(pos; pos; pos--) {
-                    const $pos = tr.doc.resolve(pos)
-                    if($pos.marks().every(mark => mark.type.name !== 'link')) break
-                }
-
-                console.log('eq', flushMark.eq(activeMark))
-
+function reducer(meta: Meta<linkDuckAction>, value: linkPluginState): linkPluginState {
+    const { action, payload } = meta
+        switch(action) {
+            case duckMap.create_mark: {
+                const { activeMark, activeDom } = payload
                 return {
                     ...value,
-                    pos,
+                    activeDom,
                     activeMark,
                 }
             }
 
-            else return {
-                ...value,
-                activeMark: null,
+            case 'test': {
+                const { nouse } = payload
             }
+
+
+            default: return value
         }
-    },
-
-    view: (view) => {
-        const linkView = new LinkView(view)
-        const { tr, dispatch } = deConsView(view)
-        dispatch(tr.setMeta(LINK_PLUGIN_KEY, {
-            action: 'create view',
-            payload: {
-                view: linkView
-            }
-        }))
-        return linkView
-    },
-
-    props: {
-        //拦截事件
-        handleKeyDown(view, event) {
-            const { state } = view
-            const { activeMark, emitter } = this.getState(state)
-            if(!activeMark || !emitter) return false
-
-            const { key, ctrlKey } = event
-            if(key !== 'Enter') return false
-            
-            //如果Ctrl+Enter，进入input
-            if(ctrlKey)
-                emitter.emit('enter input')
-            return true
-        },
-
-        handleDoubleClickOn(view, event) {
-            const { state } = view
-            const { activeMark } = this.getState(state)
-            if(!activeMark) return false
-
-            const { href } = activeMark.attrs
-            window.open(href as string, '__blank')
-            return true
-        }
-
-        // handleDOMEvents: {
-        //     keyup(view, event) {
-        //         console.log('keyup', event)
-        //         event.preventDefault()
-        //         return false
-        //     }
-        // }
-    }
-})
-
-
+}
