@@ -4,7 +4,7 @@ import { deConsView, reactDirAttach } from "@editor/utils";
 import { pmMark, pmNode } from "prosemirror-model";
 import { EditorView, NodeView } from "prosemirror-view";
 import HrefPrompt from "./HrefPrompt";
-import { duckMap, LINK_PLUGIN_KEY } from "./plugin";
+import { LINK_PLUGIN_KEY } from "./plugin";
 
 export class LinkView  implements NodeView {
 
@@ -36,7 +36,7 @@ export class LinkView  implements NodeView {
             `
             const { tr, dispatch } = deConsView(view)
             dispatch(tr.setMeta(LINK_PLUGIN_KEY, {
-                action: duckMap.create_mark,
+                action: 'create mark',
                 payload: {
                     activeMark: this.mark,
                     activeDom: this.dom,

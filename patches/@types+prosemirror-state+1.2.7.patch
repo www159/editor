@@ -1,5 +1,5 @@
 diff --git a/node_modules/@types/prosemirror-state/index.d.ts b/node_modules/@types/prosemirror-state/index.d.ts
-index 327fecc..54c8288 100644
+index 327fecc..46f6b77 100644
 --- a/node_modules/@types/prosemirror-state/index.d.ts
 +++ b/node_modules/@types/prosemirror-state/index.d.ts
 @@ -16,7 +16,7 @@ import { EditorProps, EditorView } from 'prosemirror-view';
@@ -7,11 +7,19 @@ index 327fecc..54c8288 100644
   * constructor. It provides a definition for a plugin.
   */
 -export interface PluginSpec<T = any, S extends Schema = any> {
-+export interface PluginSpec<T = any, S extends Schema = any, A extends IMeta[] = any> {
++export interface PluginSpec<T = any, S extends Schema = any, A  = any> {
      /**
       * The [view props](#view.EditorProps) added by this plugin. Props
       * that are functions will be bound to have the plugin instance as
-@@ -34,7 +34,7 @@ export interface PluginSpec<T = any, S extends Schema = any> {
+@@ -27,14 +27,14 @@ export interface PluginSpec<T = any, S extends Schema = any> {
+      * Allows a plugin to define a [state field](#state.StateField), an
+      * extra slot in the state object in which it can keep its own data.
+      */
+-    state?: StateField<T, S> | null | undefined;
++    state?: StateField<T, S, A> | null | undefined;
+     /**
+      * Can be used to make this a keyed plugin. You can have only one
+      * plugin with a given key in a given state, but it is possible to
       * access the plugin's configuration and state through the key,
       * without having access to the plugin instance object.
       */
@@ -25,7 +33,7 @@ index 327fecc..54c8288 100644
   * may influence that state and the view that contains it.
   */
 -export class Plugin<T = any, S extends Schema = any> {
-+export class Plugin<T = any, S extends Schema = any, A extends IMeta[] = any> {
++export class Plugin<T = any, S extends Schema = any, A  = any> {
      /**
       * Create a plugin.
       */
@@ -34,12 +42,49 @@ index 327fecc..54c8288 100644
      /**
       * The [props](#view.EditorProps) exported by this plugin.
       */
+@@ -100,31 +100,31 @@ export class Plugin<T = any, S extends Schema = any> {
+  * describes the state it wants to keep. Functions provided here are
+  * always called with the plugin instance as their `this` binding.
+  */
+-export interface StateField<T = any, S extends Schema = Schema> {
++export interface StateField<T = any, S extends Schema = Schema, A = any> {
+     /**
+      * Initialize the value of the field. `config` will be the object
+      * passed to [`EditorState.create`](#state.EditorState^create). Note
+      * that `instance` is a half-initialized state instance, and will
+      * not have values for plugin fields initialized after this one.
+      */
+-    init(this: Plugin<T, S>, config: { [key: string]: any }, instance: EditorState<S>): T;
++    init(this: Plugin<T, S, A>, config: { [key: string]: any }, instance: EditorState<S>): T;
+     /**
+      * Apply the given transaction to this state field, producing a new
+      * field value. Note that the `newState` argument is again a partially
+      * constructed state does not yet contain the state from plugins
+      * coming after this one.
+      */
+-    apply(this: Plugin<T, S>, tr: Transaction<S>, value: T, oldState: EditorState<S>, newState: EditorState<S>): T;
++    apply(this: Plugin<T, S, A>, tr: Transaction<S>, value: T, oldState: EditorState<S>, newState: EditorState<S>): T;
+     /**
+      * Convert this field to JSON. Optional, can be left off to disable
+      * JSON serialization for the field.
+      */
+-    toJSON?: ((this: Plugin<T, S>, value: T) => any) | null | undefined;
++    toJSON?: ((this: Plugin<T, S, A>, value: T) => any) | null | undefined;
+     /**
+      * Deserialize the JSON representation of this field. Note that the
+      * `state` argument is again a half-initialized state.
+      */
+-    fromJSON?: ((this: Plugin<T, S>, config: { [key: string]: any }, value: any, state: EditorState<S>) => T) | null | undefined;
++    fromJSON?: ((this: Plugin<T, S, A>, config: { [key: string]: any }, value: any, state: EditorState<S>) => T) | null | undefined;
+ }
+ /**
+  * A key is used to [tag](#state.PluginSpec.key)
 @@ -132,7 +132,7 @@ export interface StateField<T = any, S extends Schema = Schema> {
   * editor state. Assigning a key does mean only one plugin of that
   * type can be active in a state.
   */
 -export class PluginKey<T = any, S extends Schema = any> {
-+export class PluginKey<T = any, S extends Schema = any, A extends IMeta[] = any> {
++export class PluginKey<T = any, S extends Schema = any, A  = any> {
      /**
       * Create a plugin key.
       */
@@ -57,23 +102,24 @@ index 327fecc..54c8288 100644
       * name or by plugin.
       */
 -    setMeta(key: string | Plugin<any, S> | PluginKey<any, S>, value: any): Transaction;
-+    setMeta<A extends IMeta[] = any>(key: string | Plugin<any, S, A> | PluginKey<any, S, A>, value: A[keyof A]): Transaction;
++    setMeta<A = any>(key: string | Plugin<any, S, A> | PluginKey<any, S, A>, value: IMeta<A>): Transaction;
      /**
       * Retrieve a metadata property for a given name or plugin.
       */
 -    getMeta(key: string | Plugin<any, S> | PluginKey<any, S>): any;
-+    getMeta<A extends IMeta[] = any>(key: string | Plugin<any, S> | PluginKey<any, S>): A[keyof A];
++    getMeta<A = any>(key: string | Plugin<any, S, A> | PluginKey<any, S, A>): IMeta<A>
      /**
       * Returns true if this transaction doesn't contain any metadata,
       * and can thus safely be extended.
-@@ -585,3 +585,10 @@ export class Transaction<S extends Schema = any> extends Transform<S> {
+@@ -585,3 +585,11 @@ export class Transaction<S extends Schema = any> extends Transform<S> {
       */
      scrollIntoView(): Transaction;
  }
 +
-+export interface IMeta {
-+    action: string
-+    payload: {
-+        [key: string]: any
++type IMeta<T extends { [key: string]: any } = any> = {
++    [key in keyof T]: {
++        action: key,
++        payload: T[key]
 +    }
-+}
++}[keyof T]
++

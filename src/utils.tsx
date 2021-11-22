@@ -69,3 +69,49 @@ export function attachGlobal(view: EditorView, dom: Node) {
     if(father) father.appendChild(dom)
     return dom
 }
+
+class WrappedBoolean {
+
+    value: boolean
+
+    constructor(val: boolean) {
+        this.value = val
+    }
+
+    then() {
+       return new WrappedBoolean(this.value)
+    }
+
+    endif() {
+        return new WrappedBoolean(this.value)
+    }
+    
+    final() {
+        return this.value
+    }
+}
+
+export class Procedure<T> {
+
+    value: T | WrappedBoolean
+
+    constructor(argv: T) {
+        this.value = argv
+    }
+
+    then<NT = unknown>(func?: (argv: T) => NT | boolean) {
+        if(!func) return new WrappedBoolean(true)
+        const ret =  func(this.value as T)
+        if(ret === false) return new WrappedBoolean(false)
+        return new Procedure(ret as NT)
+    }
+
+    endif() {
+        return this.value as T
+    }
+
+    final() {
+        if(this.value instanceof WrappedBoolean) return this.value.final()
+        return true
+    }
+}
