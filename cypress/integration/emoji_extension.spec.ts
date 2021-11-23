@@ -27,6 +27,18 @@ describe('emoji extension', () => {
             .get('emoji').should('have.length.at.least', 1)
         })
 
-        it('force ')
+        it('force exit', () => {
+            cy.get('.editor').type('{leftarrow}')
+            .get('.emoji-bar-wrapper').not('be.none')
+            cy.get('.editor').type('{ctrl+leftarrow}')
+            .get('div').should('not.have.class', '.emoji')
+
+            cy.get('.editor').type('{rightarrow}')
+            .get('.emoji-bar-wrapper').not('be.none')
+
+            cy.get('.editor').type('{ctrl+rightarrow}')
+            .get('div').should('not.have.class', '.emoji')
+            
+        })
     })
 })
