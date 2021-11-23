@@ -25,6 +25,7 @@ jobs:
       - name: Cypress-run
         uses: cypress-io/github-action@v2
         with:
+          command-prefix: yarn dlx
           start: yarn vite
           wait-on: 'http://localhost:3000'
 
