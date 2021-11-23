@@ -90,6 +90,7 @@ export interface EditorOptions extends BasicEvent {
     extensions: Array<Extension>
     dom: HTMLElement
     content: string
+    json?: JSON
 }
 
 export type ExtensionType = 'MARK' | 'NODE' | 'PLUGIN'

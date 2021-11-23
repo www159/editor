@@ -1,7 +1,6 @@
 import { Extensions } from "@editor/core";
 import { InputRule } from "prosemirror-inputrules";
 import { NodeType, pmNode } from "prosemirror-model";
-import { Extension } from "typescript";
 import { emojiPlugin } from "./emojiState";
 import { emojiInputRule } from "./inputrules";
 import "./index.less"
@@ -24,6 +23,7 @@ export const emojiExtensions: Extensions = [
                 content: 'text*',
                 atom: true,
                 inline: true,
+                // draggable: true,
                 attrs: {
                     index: { default: -1 },
                 },

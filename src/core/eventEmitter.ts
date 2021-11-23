@@ -20,6 +20,10 @@ export class EventEmitter {
         }
     }
 
+    public onChannel(channel: string, event: string, fn: Function) {
+        return this.on(bindChannel(channel, event), fn)
+    }
+
     public emitAsync(event: string, ...args: any): this {
         const handlers = this.handlers[event]
         
@@ -49,6 +53,10 @@ export class EventEmitter {
         return this
     }
 
+    public emitChannel(channel: string, event: string, ...args: any) {
+        return this.emit(bindChannel(channel, event), args)
+    }
+
     public off(event: string, fn?: Function) {
         const handlers = this.handlers[event]
 
@@ -68,3 +76,5 @@ export class EventEmitter {
         this.handlers = {}
     }
 }
+
+const bindChannel = (channel: string, event: string) => `${channel}##${event}` 

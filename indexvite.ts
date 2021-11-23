@@ -29,7 +29,7 @@ document.addEventListener('keydown', (e) => {
 
 
 //测试表情框
-const { tr } = editor.state
-const { dispatch, state } = editor.view
+// const { tr } = editor.state
+// const { dispatch, state } = editor.view
 
-dispatch(tr.setSelection(new NodeSelection(tr.doc.resolve(tr.doc.nodeSize - 5))))
+// dispatch(tr.setSelection(new NodeSelection(tr.doc.resolve(tr.doc.nodeSize - 5))))

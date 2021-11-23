@@ -17,7 +17,7 @@ export class Editor extends EventEmitter  {
     private options: EditorOptions = {
         dom: document.createElement('div'),
         content: '',
-        json: null,
+        // json: JSON.parse('1'),
         extensions: new Array<Extension>(),
         onCreate: () => null,
         onUpdate: () => null,

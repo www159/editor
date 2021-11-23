@@ -1,8 +1,8 @@
 import { Command } from "prosemirror-commands";
 import { Fragment, pmNode, Schema } from "prosemirror-model";
-import { EditorState } from "prosemirror-state";
+import { EditorState, IMeta, Plugin, PluginKey } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
-import { ComponentType, ReactElement } from "react";
+import { ComponentType, PureComponent, ReactElement } from "react";
 import ReactDOM from "react-dom";
 // import { hot } from "react-hot-loader"
 import { DispatchFunc, EventEmitter } from "./core";
@@ -114,4 +114,25 @@ export class Procedure<T> {
         if(this.value instanceof WrappedBoolean) return this.value.final()
         return true
     }
+}
+
+export function setStyle(elm: HTMLElement, style: string) {
+    elm.style.cssText = style
+}
+
+export function pmEmit<T, S extends Schema = any, A = any>(view: EditorView, dest: PluginKey<T, S, A> | Plugin<T, S, A>, meta: IMeta<A>) {
+    const { tr, dispatch } = deConsView(view)
+    dispatch(tr.setMeta(dest, meta))
+}
+
+export function pmEmitAsync<T, S extends Schema = any, A = any>(view: EditorView, dest: PluginKey<T, S, A> | Plugin<T, S, A>, meta: IMeta<A>) {
+    const { tr, dispatch } = deConsView(view)
+    setTimeout(() => {
+        dispatch(tr.setMeta(dest, meta))
+    }, 20)
+}
+
+export function pmFetch<T, S extends Schema = any, A = any>(view: EditorView, dest: PluginKey<T, S, A> | Plugin<T, S, A>) {
+    const { tr } = deConsView(view)
+    return tr.getMeta<A>(dest)
 }

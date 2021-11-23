@@ -65,7 +65,8 @@ function doWrapInList(
         content = Fragment.from(wrappers[i].type.create(wrappers[i].attrs, content))
     }
     
-    // console.log(range.start, range.end)
+    console.log(range.start, range.end)
+    console.log(wrappers, range)
 
     tr.step(new ReplaceAroundStep(
         range.start - (joinBefore ? 2 : 0),

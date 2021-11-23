@@ -1,50 +1,59 @@
+import { Editor } from "@editor";
 import { EventEmitter } from "@editor/core";
 import { css } from "@editor/core/utils/stringRenderer";
-import { deConsView, reactDirAttach } from "@editor/utils";
-import { pmMark, pmNode } from "prosemirror-model";
+import { deConsView, pmEmit, reactDirAttach, setStyle } from "@editor/utils";
+import { pmNode } from "prosemirror-model";
 import { EditorView, NodeView } from "prosemirror-view";
 import HrefPrompt from "./HrefPrompt";
-import { LINK_PLUGIN_KEY } from "./plugin";
+import { LINK_PLUGIN_KEY } from "./linkState";
 
-export class LinkView  implements NodeView {
+export class LinkView implements NodeView {
 
     dom: HTMLAnchorElement
 
-    prompt: HTMLDivElement
+    node: pmNode
 
-    mark: pmMark
+    view: EditorView
+
+    getPos: () => number
 
     emitter: EventEmitter
 
-    constructor(mark: pmMark, view: EditorView, emitter: EventEmitter) {
-        this.emitter = emitter
-        this.mark = mark
-        const { href, title } = this.mark.attrs
-        const dom = document.createElement('a')
-        dom.href = href
-        dom.title = title
-        this.dom = dom
+    prompt: HTMLDivElement
 
-        const parent = view.dom.parentElement as HTMLElement
-        const prompt = parent.appendChild(document.createElement('div'))
-        this.prompt = prompt
+    constructor(node: pmNode, view: EditorView, getPos: () => number, emitter: EventEmitter) {
+
+        this.node = node
+
+        this.view = view
+
+        this.getPos = getPos
         
-        reactDirAttach(HrefPrompt, { emitter: this.emitter }, prompt)
-        .then(parent => {
-            prompt.style.cssText = css`
-            display: none;
-            `
-            const { tr, dispatch } = deConsView(view)
-            dispatch(tr.setMeta(LINK_PLUGIN_KEY, {
-                action: 'create mark',
+        this.emitter = emitter
+
+        const prompt = view.dom.parentNode?.appendChild(document.createElement('div'))
+
+        if(prompt) this.prompt = prompt
+
+        const { tr } = deConsView(view)
+
+        emitter.on('update', () => {
+            pmEmit(view, LINK_PLUGIN_KEY, {
+                action: 'create link',
                 payload: {
-                    activeMark: this.mark,
-                    activeDom: this.dom,
+                    view: this
                 }
-            }))
-            // setTimeout(() => {
-                
-            // }, 20)
+            })
+        })
+
+        reactDirAttach(HrefPrompt, { emitter: this.emitter }, this.prompt)
+        .then(() => {
+            setStyle(this.prompt, css`
+                display: none;
+            `)
+
+
         })
     }
+
 }
