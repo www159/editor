@@ -1,0 +1,21 @@
+{
+    // "extends": "../../tsconfig.json",
+    "include": ["./**/*.ts", "./**/*.tsx"],
+    "exclude": ["node_module"],
+    "compilerOptions": {
+        "lib": ["ES2019", "DOM"],
+        "importHelpers": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "baseUrl": ".",
+        "jsx": "react-jsx",
+        "target": "ES5",
+        "strictPropertyInitialization": false,
+        "esModuleInterop": true,
+        "paths": {
+            "@editor": ["./src"],
+            "@editor/*": ["./src/*"],
+        }
+    }
+}

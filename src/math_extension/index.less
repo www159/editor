@@ -1,0 +1,133 @@
+@import url("../../node_modules/katex/dist/katex.min.css");
+.math-node {
+    min-width: 1em;
+    min-height: 1em;
+    font-size: 0.95em;
+    font-family: 'Consolas', 'Ubunti Mono', monospace;
+    cursor: auto;
+
+    @errorColor: red;
+
+    &.math-select {
+        .math-render {
+            background-color: #c0c0c0ff;
+        }
+    }
+    &.empty-math {
+        .math-render {
+            &:before {
+                content: '(empty)';
+                color: @errorColor;
+            }
+        }
+    }
+
+    .math-render {
+        &.parse-error {
+            &:before {
+                content: '(math-error)';
+                color: @errorColor;
+                cursor: help;
+            }
+        }
+    }
+
+    .math-src {
+        display: none;
+        color: rgb(132, 33, 162);
+        tab-size: 4;
+    }
+
+    &.ProseMirror-selectednode {
+        outline: none;
+        .math-src {
+            display: inline;
+        }
+        .math-render {
+            display: none;
+        }
+    }
+}
+
+@delimiterColor: #b0b0b0;
+
+math-inline {
+    display: inline;
+    white-space: nowrap;
+
+    &.math-select {
+        .math-render {
+            padding-top: 2px;
+        }
+    }
+
+    .math-render {
+        display: inline-block;
+        font-size: 0.85em;
+        cursor: pointer;
+    }
+
+    .math-src {
+        .ProseMirror {
+            display: inline;
+            border-right: 1px solid transparent;
+            border-left: 1px solid transparent;
+        }
+
+        &::after {
+            content: '$';
+            color: @delimiterColor;
+        }
+
+        &::before {
+            content: '$';
+            color: @delimiterColor;
+        }
+    }
+}
+
+math-display {
+    display: block;
+    align-self: center;
+    .math-render {
+        display: block;
+    }
+
+    .ProseMirror-selectednode {
+        background-color: #eee;
+    }
+
+    .math-src {
+        .ProseMirror {
+            width: 100%;
+            display: block;
+        }
+
+        &::after {
+            content: '$$';
+            text-align: left;
+            color: @delimiterColor;
+        }
+        &::before {
+            content: '$$';
+            text-align: left;
+            color: @delimiterColor;
+        }
+    }
+
+    .katex-display {
+        margin: 0;
+    }
+}
+
+.math-preview {
+    text-align: center;
+    display: block;
+    margin: 0 0.5em;
+}
+// .math-preview::after {
+//     content: "☁";
+//     font-size: 200%;
+//     line-height: 0.1;
+//     font-weight: bold;
+// }

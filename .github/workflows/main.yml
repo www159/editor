@@ -1,0 +1,39 @@
+name: type simulate test
+
+on: [push]
+
+jobs:
+  # This workflow contains a single job called "build"
+  cypress-run:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Runs a single command using the runners shell
+      - name: Cypress-run
+        uses: cypress-io/github-action@v2
+        with:
+          command-prefix: yarn
+          start: yarn serve:dev
+          wait-on: 'http://localhost:3000'
+      
+      # - run: yarn
+
+      - name: "Check file existence"
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "package.json, LICENSE, README.md"
+
+      - name: generate coverage
+        run: yarn update:badge
+
+      - name: update readme
+        uses: mikeal/publish-to-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
