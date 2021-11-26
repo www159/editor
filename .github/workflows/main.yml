@@ -31,6 +31,9 @@ jobs:
       - name: generate coverage
         run: yarn update:badge
 
+      - name: update change log
+        run: yarn changelog
+
       - name: update readme
         uses: mikeal/publish-to-github-action@master
         env:
