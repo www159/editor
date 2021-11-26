@@ -12,8 +12,7 @@ export function wrapInLink(linkType: NodeType): Command {
         if($to.pos - $from.pos === 0) return false
 
         //如果链接重叠，处理重叠并退出。
-        if(overlapLink(state, linkType,  dispatch)) return false
-
+        // if(overlapLink(state, linkType,  dispatch)) return false
 
         //处理join
         const range = new NodeRange($from, $to, $from.depth)

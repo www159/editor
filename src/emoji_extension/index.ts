@@ -5,6 +5,7 @@ import { emojiPlugin } from "./emojiState";
 import { emojiInputRule } from "./inputrules";
 import "./index.less"
 import { escapeBar } from "./commands/escapeBar";
+import { nodesFromEditor } from "@editor/utils";
 
 export type ESCAPE_KEY = 
                     | 'up' 
@@ -38,7 +39,8 @@ export const emojiExtensions: Extensions = [
             }
         },
         inputRules() {
-            return [emojiInputRule(this.editor.schema.nodes.link)]
+            const { emoji } = nodesFromEditor(this.editor)
+            return [emojiInputRule(emoji)]
         },
 
         shortcutKey() {

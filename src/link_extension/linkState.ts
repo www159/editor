@@ -19,6 +19,7 @@ interface linkMeta {
 export const LINK_PLUGIN_KEY = new PluginKey<linkState, Schema, linkMeta>('link plugin key')
 
 function createLinkView(node: pmNode, view: EditorView, getPos: () => number, emitter: EventEmitter) {
+    console.log(222222)
     const linkView = new LinkView(node, view, getPos, emitter)
     const { state } = view
     const { storedLink } = LINK_PLUGIN_KEY.getState(state) as linkState

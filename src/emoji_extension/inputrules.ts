@@ -11,7 +11,8 @@ export const emojiInputRule = (type: NodeType) => (new InputRule(
         let $start = state.doc.resolve(start),
             $end = state.doc.resolve(end),
             { tr } = state
-        
+        console.log('create')
+        console.log($start.parent.toJSON())
         if(!$start.parent.canReplaceWith($start.index(), $end.index(), type))
             return null
 

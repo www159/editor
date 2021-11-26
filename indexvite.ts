@@ -9,7 +9,7 @@ import { NodeSelection } from "prosemirror-state";
 const editor = new Editor({
     content: 
     html`
-    <p>emojiaaaaaa<a>aa</a>aaaaaaaaaaaaaaaaaaaaaaaa<a href="链接" title="链接">hhh</a></p>
+    <p>emojiaaaaaaaaaaaaaaaaaaa<a>aaaaa</a>aaaaaaaa<a>bbbbbbbbbbbbbbb</a></p>
     `,
     dom: document.querySelector('.editor') as HTMLElement,
     extensions,
