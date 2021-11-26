@@ -38,7 +38,7 @@ export const emojiExtensions: Extensions = [
             }
         },
         inputRules() {
-            return [emojiInputRule(this.type as NodeType)]
+            return [emojiInputRule(this.editor.schema.nodes.link)]
         },
 
         shortcutKey() {

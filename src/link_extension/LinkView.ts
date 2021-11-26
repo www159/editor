@@ -54,7 +54,7 @@ export class LinkView implements NodeView {
         .then(() => {
             this.prompt.className = 'link-tip-wrapper'
             setStyle(this.prompt, css`
-                display: "";
+                display: none;
             `)
         })
     }

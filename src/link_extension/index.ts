@@ -1,4 +1,5 @@
 import { ConsNode, Extensions } from "@editor/core";
+import { nodesFromEditor } from "@editor/utils";
 import { InputRule, textblockTypeInputRule, wrappingInputRule } from "prosemirror-inputrules";
 import { NodeType } from "prosemirror-model";
 import { wrapInLink } from "./commands";
@@ -21,15 +22,26 @@ export const linkExtensions: Extensions = [
                     href: { default: '链接' },
                     title: { default: '链接' },
                 },
+                parseDOM: [{
+                    tag: 'a',
+                    getAttrs: node => {
+                        const href = (node as HTMLElement).getAttribute('href')
+                        const title = (node as HTMLElement).getAttribute('title')
+                        const obj = { href, title }
+                        return href ?
+                        obj : title ?
+                        obj : {}
 
+                    }
+                }],
                 toDOM: node => ['a', { href: node.attrs.href, title: node.attrs.title }, 0]
             },
         },
 
         shortcutKey() {
-            const type = this.type as NodeType
+            const { link } = nodesFromEditor(this.editor)
             return {
-                "Ctrl-Alt-l": wrapInLink(type)
+                "Ctrl-Alt-l": wrapInLink(link)
             }
         }
 

@@ -11,6 +11,11 @@ export function wrapInLink(linkType: NodeType): Command {
 
         if($to.pos - $from.pos === 0) return false
 
+        //如果链接重叠，处理重叠并退出。
+        if(overlapLink(state, linkType,  dispatch)) return false
+
+
+        //处理join
         const range = new NodeRange($from, $to, $from.depth)
         const wrappers = findWrapping(range, linkType)
         if(!wrappers) return false
@@ -34,4 +39,11 @@ export function wrapInLink(linkType: NodeType): Command {
 
         return true
     }
+}
+
+function overlapLink(state: EditorState, linkType: NodeType, dispatch?: DispatchFunc) {
+    let { $from, $to } = state.selection
+    if($from.parent.type !== linkType && $to.parent.type !== linkType) return false
+    console.log($to.parent.type === linkType)
+    return true
 }

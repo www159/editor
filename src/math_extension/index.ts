@@ -1,5 +1,4 @@
-import { Extension, Extensions } from '@editor/core';
-import { chainCommands, createParagraphNear, deleteSelection, joinBackward, newlineInCode, selectNodeBackward, splitBlock } from 'prosemirror-commands';
+import { ConsNode, Extension, Extensions } from '@editor/core';
 import { NodeSpec, NodeType, pmNode } from 'prosemirror-model';
 import { makeInlineMathInputRule, REGEX_INLINE_MATH_DOLLARS_ESCAPED, makeBlockMathInputrule, REGEX_BLOCK_MATH_DOLLARS, REGEX_INLINE_MATH_DOLLARS_LITE } from './plugins/mathInputrules';
 import { mathPlugin } from './mathPlugin';
@@ -7,7 +6,14 @@ import { mathPlugin } from './mathPlugin';
 // import { BlockMathInputrule, InlineMathInputRule, REGEX_BLOCK_MATH_DOLLARS, REGEX_INLINE_MATH_DOLLARS_ESCAPED } from './plugins/mathInputrules';
 import { mathSelectPlugin } from './plugins/mathSelect';
 import { mathPreviewPlugin } from './plugins/mathPreview';
+import { nodesFromEditor } from '@editor/utils';
 
+declare module '@editor/core' {
+    type math_node =
+    | 'math_inline'
+    | 'math_display'
+    interface WNode extends ConsNode<math_node> {}
+}
 
 export const mathExtensions: Extensions = [
     {
@@ -57,9 +63,10 @@ export const mathExtensions: Extensions = [
         },
 
         inputRules() {
+            const { link } = nodesFromEditor(this.editor)
             return [makeBlockMathInputrule(
                 REGEX_BLOCK_MATH_DOLLARS,
-                this.type as NodeType,
+                link,
             )]
         }
     },

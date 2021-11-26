@@ -7,14 +7,12 @@ import { ComponentType, PureComponent, ReactElement } from "react";
 import ReactDOM from "react-dom";
 
 // import { hot } from "react-hot-loader"
-import { DispatchFunc, EventEmitter, Realize } from "./core";
+import { DispatchFunc, Editor, EventEmitter, Realize, WSchema } from "./core";
 import React from "react"
 
 
 
-export function makeTextFragment<S extends Schema<any, any>>(text: string, schema: S): Fragment<S> {
-    return Fragment.from(schema.text(text) as pmNode<S>)
-}
+/*********************************** nodeView ***********************************/
 
 export function basicSelection(node: Node) {
     (node as HTMLElement).classList.add('ProseMirror-selectednode')
@@ -23,6 +21,8 @@ export function basicSelection(node: Node) {
 export function basicDeselection(node: Node) {
     (node as HTMLElement).classList.remove('ProseMirror-selectednode')
 }
+
+/*********************************** combine react and ts ***********************************/
 
 export function reactDomAttach<P>(Component_: ComponentType<P>, props: P, father: Node, focus = false) {
     // const Hot = hot(module)(Component_, props)
@@ -46,31 +46,13 @@ export function reactDomUnattach(node: Node) {
     const result = ReactDOM.unmountComponentAtNode(node as Element)
 }
 
-export function deConsView(view: EditorView) {
-    const { state, dispatch } = view
-    const { tr } = state
-    return { tr, dispatch }
-}
-
-export function serialCommands(...commands: Command[]) {
-    return function(state: EditorState, dispatch: DispatchFunc, view: EditorView): boolean {
-        for(let i = 0; i < commands.length; i++) {
-            let result = commands[i](state, dispatch, view)
-            
-            state = view.state
-            if(i + 1 === commands.length) {
-                return result
-            }
-        }
-        return true
-    }
-}
-
 export function attachGlobal(view: EditorView, dom: Node) {
     const father = view.dom.parentNode
     if(father) father.appendChild(dom)
     return dom
 }
+
+/*********************************** resolve if...else... ***********************************/
 
 class WrappedBoolean {
 
@@ -92,6 +74,7 @@ class WrappedBoolean {
         return this.value
     }
 }
+
 
 export class Procedure<T> {
 
@@ -122,6 +105,15 @@ export function setStyle(elm: HTMLElement, style: string) {
     elm.style.cssText = style
 }
 
+
+/*********************************** event emit among prosemirror plugins  ***********************************/
+
+export function deConsView(view: EditorView) {
+    const { state, dispatch } = view
+    const { tr } = state
+    return { tr, dispatch }
+}
+
 export function pmEmit<T, S extends Schema = any, A = any>(view: EditorView, dest: PluginKey<T, S, A> | Plugin<T, S, A>, meta: IMeta<A>) {
     const { tr, dispatch } = deConsView(view)
     dispatch(tr.setMeta(dest, meta))
@@ -137,9 +129,40 @@ export function pmFetch<T, S extends Schema = any, A = any>(tr: Transaction, des
     return tr.getMeta<A>(dest)
 }
 
+/*********************************** command assisant ***********************************/
+
 export function createWrapper(wrappers: Realize<ReturnType<typeof findWrapping>>) {
     let content = Fragment.empty
     for(let i = wrappers.length - 1; i >= 0; i--) 
         content = Fragment.from(wrappers[i].type.create(wrappers[i].attrs, content))
     return content
+}
+
+export function serialCommands(...commands: Command[]) {
+    return function(state: EditorState, dispatch: DispatchFunc, view: EditorView): boolean {
+        for(let i = 0; i < commands.length; i++) {
+            let result = commands[i](state, dispatch, view)
+            
+            state = view.state
+            if(i + 1 === commands.length) {
+                return result
+            }
+        }
+        return true
+    }
+}
+
+export function makeTextFragment<S extends WSchema>(text: string, schema: S): Fragment<S> {
+    return Fragment.from(schema.text(text) as pmNode)
+}
+
+/*********************************** editor assistant  ***********************************/
+export function nodesFromEditor(editor: Editor) {
+    const { schema: { nodes } } = editor
+    return nodes
+}
+
+export function marksFromEditor(editor: Editor) {
+    const { schema: { marks } } = editor
+    return marks
 }
