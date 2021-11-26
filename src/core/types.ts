@@ -3,7 +3,7 @@ import { MenuItem } from "prosemirror-menu";
 import { NodeSpec, NodeType, MarkSpec, Node, MarkType, Mark } from "prosemirror-model";
 import { NodeSelection, Plugin, Transaction } from "prosemirror-state";
 import { Command, Keymap } from "prosemirror-commands";
-import { Editor } from ".";
+import { Editor, WSchema } from ".";
 
 /*********************************** model-fixed ***********************************/
 
@@ -33,6 +33,9 @@ declare module 'prosemirror-model' {
         compatibleContent(other: NodeType): boolean
     }
 }
+
+/*********************************** extension func ***********************************/
+
 
 export type DispatchFunc = ((tr: Transaction) => void) | undefined
 
@@ -99,4 +102,11 @@ export type ExtensionType = 'MARK' | 'NODE' | 'PLUGIN'
 
 // export type GnlCommands = Record<string, (...args: any[]) => Command>
 
-/*********************************** Meta Action And Payload ***********************************/
+/*********************************** interface merge ***********************************/
+export type ConsNode<T extends string = any> = {
+    [key in T]: NodeSpec
+}
+
+export type ConsMark<T extends string = any> = {
+    [key in T]: MarkSpec
+}

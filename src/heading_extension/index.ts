@@ -1,7 +1,11 @@
-import { Extension } from "@editor/core"
+import { ConsNode, Extension } from "@editor/core"
 // import { InputRuleSpec } from "@editor/core/types"
 import { InputRule, textblockTypeInputRule } from "prosemirror-inputrules"
 import { NodeType, pmNode } from "prosemirror-model"
+
+declare module '@editor/core' {
+    interface WNode extends ConsNode<'heading'> {}
+}
 
 export const headingExtension: Extension = {
     type: 'NODE',

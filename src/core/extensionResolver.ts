@@ -1,6 +1,6 @@
 import { Editor } from "@editor";
 import { MarkSpec, NodeSpec, pmMark, pmNode, Schema } from "prosemirror-model";
-import { Extensions } from "@editor/core";
+import { Extensions, WSchema } from "@editor/core";
 import { getType } from "./utils/getType";
 import { Plugin } from "prosemirror-state";
 import { bindFunc } from "./utils/bindFunc";
@@ -9,7 +9,7 @@ export class ExtensionResolver {
 
     editor: Editor
 
-    schema: Schema
+    schema: WSchema
 
     extensions: Extensions
     //每个extension只有一个nodes与marks
@@ -31,7 +31,7 @@ export class ExtensionResolver {
             return (b.priority as number) - (a.priority as number)
         })
 
-
+        
         this.extensions.forEach(extension => {
             
 
@@ -66,8 +66,6 @@ export class ExtensionResolver {
             nodes: Nodes,
             marks: Marks
         })
-
-        
     }
 
     //生成插件

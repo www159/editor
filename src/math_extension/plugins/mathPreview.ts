@@ -1,4 +1,5 @@
-import { ContentMatch, NodeType, pmNode } from "prosemirror-model";
+import { pmFetch } from "@editor/utils";
+import { ContentMatch, NodeType, pmNode, Schema } from "prosemirror-model";
 import { EditorState, Plugin, PluginKey, TextSelection, Transaction } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 
@@ -7,7 +8,7 @@ import { Decoration, DecorationSet } from "prosemirror-view";
  * 供外部使用的插件。用于获取点开编辑框公式节点的位置，内容。
  * apply更新需要调整。
  */
-export const MATH_PREVIEW_KEY = new PluginKey('prosemirror math preview')
+export const MATH_PREVIEW_KEY = new PluginKey<DecorationSet, Schema, MathPrevireAction>('prosemirror math preview')
 export const PREVIEW_WIDGET_KEY = 'prosemirror math preview'
 /**通过公式节点的setMeta来调用apply
  * 因为每次只能点开一个公式节点。所以
@@ -34,7 +35,24 @@ export const PREVIEW_WIDGET_KEY = 'prosemirror math preview'
  * @todo 希望增加缓存机制
  */
 
-export const mathPreviewPlugin = new Plugin<DecorationSet>({
+ export interface MathPrevireAction {
+    'ADD': {
+        pos: number
+        katexDOM: HTMLElement
+    }
+    'MODIFY': {
+
+    }
+    'REMOVE': {
+        pos: number
+        katexDOM: HTMLElement
+    }
+    'in node view': {
+        random: boolean
+    }
+}
+
+export const mathPreviewPlugin = new Plugin<DecorationSet, Schema, MathPrevireAction>({
     key: MATH_PREVIEW_KEY,
     state: {
         init(_, state: EditorState) {
@@ -42,12 +60,12 @@ export const mathPreviewPlugin = new Plugin<DecorationSet>({
         },
         apply(tr, decoSet ) {
             decoSet.map(tr.mapping, tr.doc)
-            const meta = tr.getMeta(MATH_PREVIEW_KEY)
+            const meta = pmFetch(tr, this)
             if(!meta) return decoSet
-            const { action, payload } = meta
+            const { action } = meta
             switch(action) {
                 case 'ADD':  {
-                    const { pos, katexDOM } = payload
+                    const { pos, katexDOM } = meta.payload
                     return decoSet = decoSet.add(
                         tr.doc,
                         [Decoration.widget(pos, katexDOM, {
@@ -59,7 +77,7 @@ export const mathPreviewPlugin = new Plugin<DecorationSet>({
                     return decoSet
                 }
                 case 'REMOVE': {
-                    const { pos, katexDOM } = payload
+                    const { pos, katexDOM } = meta.payload
                     let removeDeco = decoSet.find(undefined, undefined, deco => deco.key === PREVIEW_WIDGET_KEY)
                     return decoSet = decoSet.remove(removeDeco)
                 }

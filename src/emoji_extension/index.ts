@@ -1,4 +1,4 @@
-import { Extensions } from "@editor/core";
+import { ConsNode, Extensions } from "@editor/core";
 import { InputRule } from "prosemirror-inputrules";
 import { NodeType, pmNode } from "prosemirror-model";
 import { emojiPlugin } from "./emojiState";
@@ -13,6 +13,11 @@ export type ESCAPE_KEY =
                     | 'right' 
                     | 'enter'
                     | 'escape left'
+
+
+declare module '@editor/core' {
+    interface WNode extends ConsNode<'emoji'> {}
+}
 
 export const emojiExtensions: Extensions = [
     {

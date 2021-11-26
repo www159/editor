@@ -1,5 +1,5 @@
 import { Plugin, PluginKey } from 'prosemirror-state'
-import { pmNode } from 'prosemirror-model'
+import { pmNode, Schema } from 'prosemirror-model'
 import { EditorView } from 'prosemirror-view'
 import { MathView } from './mathNodeview'
 
@@ -9,7 +9,9 @@ export interface MathPluginState {
     prevCursorPos: number
 }
 
-export const MATH_PLUGIN_KEY = new PluginKey<MathPluginState>('prosemirror-math')
+
+
+export const MATH_PLUGIN_KEY = new PluginKey<MathPluginState, Schema>('prosemirror-math')
 
 export const displayMode = {
     inline: false,

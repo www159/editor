@@ -1,6 +1,17 @@
-import { Extension, Extensions } from "@editor/core";
+import { ConsNode, Extension, Extensions } from "@editor/core";
 import { baseKeymap, chainCommands, exitCode } from "prosemirror-commands";
 // import { keymap } from "prosemirror-keymap";
+
+declare module '@editor/core' {
+    type common_node = 
+    | 'paragraph'
+    | 'doc'
+    | 'text'
+    | 'hard_break'
+    interface WNode extends ConsNode<common_node> {
+
+    }
+}
 
 export const commonExtensions: Extensions = [
     {

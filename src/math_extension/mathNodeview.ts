@@ -9,7 +9,7 @@ import { EventEmitter } from '../core'
 import { collaspeMathCmd } from './commands/collapseMathCmd';
 import { MathPluginState, MATH_PLUGIN_KEY } from './mathPlugin';
 import {  MATH_PREVIEW_KEY } from './plugins/mathPreview';
-import { deConsView } from '@editor/utils';
+import { deConsView, pmEmit } from '@editor/utils';
 // import { createMathPreviewPlugin, MATH_PREVIEW_KEY } from './plugins/mathPreview';
 
 export interface CursorPosObserver {
@@ -239,16 +239,13 @@ export class MathView extends EventEmitter implements NodeView, CursorPosObserve
             this.katexDiv.className = 'math-preview'
             let { tr: outerTr, dispatch: outerDispatch } = deConsView(this.outerView)
             let { tr: innerTr } = deConsView(this.innerView as EditorView)
-            outerDispatch(outerTr.setMeta(
-                MATH_PREVIEW_KEY,
-                {
-                    action: 'ADD',
-                    payload: {
-                        pos: this.getPos(),
-                        katexDOM: this.renderKatex(this.katexDiv, false, innerTr.doc)
-                    }
+            pmEmit(this.outerView, MATH_PREVIEW_KEY, {
+                action: 'ADD',
+                payload: {
+                    pos: this.getPos(),
+                    katexDOM: this.renderKatex(this.katexDiv, false, innerTr.doc) as HTMLElement
                 }
-            ))
+            })
         }
 
     }
@@ -294,15 +291,19 @@ export class MathView extends EventEmitter implements NodeView, CursorPosObserve
                                 if(this.doc.textContent.length > 0) {
                                     return false
                                 }
-                                this.outerView.dispatch(this.outerView.state.tr.insertText(''))
-                                this.outerView.focus()
+                               setTimeout(() => {
+                                    this.outerView.dispatch(this.outerView.state.tr.insertText(''))
+                                    this.outerView.focus()
+                               }, 20)
                                 return true
                             }
                         ),
 
                         'Ctrl-Backspace': (state, dispatch) => {
-                            this.outerView.dispatch(this.outerView.state.tr.insertText(''))
-                            this.outerView.focus()
+                            setTimeout(() => {
+                                this.outerView.dispatch(this.outerView.state.tr.insertText(''))
+                                this.outerView.focus()
+                            }, 20)
                             return true
                         },
 
@@ -362,16 +363,14 @@ export class MathView extends EventEmitter implements NodeView, CursorPosObserve
         }
         
         let { tr: outerTr, dispatch: outerDispatch } = deConsView(this.outerView)
-        outerDispatch(outerTr.setMeta(
-            MATH_PREVIEW_KEY,
-            {
-                action: 'REMOVE',
-                payload: {
-                    pos: this.getPos(),
-                    katexDOM: this.katexDiv
-                }   
-            }
-        ))
+
+        pmEmit(this.outerView, MATH_PREVIEW_KEY, {
+            action: 'REMOVE',
+            payload: {
+                pos: this.getPos(),
+                katexDOM: this.katexDiv as HTMLElement
+            }   
+        })
         this.isEditing = false
     }
 

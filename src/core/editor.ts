@@ -10,6 +10,7 @@ import { InputRule, inputRules } from 'prosemirror-inputrules'
 import { getClipboardTextSerializer } from './common/clipboardTextSerializer'
 import { ExtensionResolver } from './extensionResolver'
 import { elementFromString } from './utils/elementFromString'
+import { WSchema } from '@editor/core'
 // import { isConstTypeReference } from 'typescript'
 
 export class Editor extends EventEmitter  {
@@ -25,7 +26,7 @@ export class Editor extends EventEmitter  {
         onDestroy: () => null,
     }
 
-    schema: Schema
+    schema: WSchema
 
     public view: EditorView
 

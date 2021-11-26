@@ -128,9 +128,8 @@ export function pmEmit<T, S extends Schema = any, A = any>(view: EditorView, des
 }
 
 export function pmEmitAsync<T, S extends Schema = any, A = any>(view: EditorView, dest: PluginKey<T, S, A> | Plugin<T, S, A>, meta: IMeta<A>) {
-    const { tr, dispatch } = deConsView(view)
     setTimeout(() => {
-        dispatch(tr.setMeta(dest, meta))
+       pmEmit(view, dest, meta)
     }, 20)
 }
 

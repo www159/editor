@@ -8,6 +8,8 @@ export type {
     Realize,
     InputRulesFunc,
     shortcutKeyFunc,
+    ConsNode,
+    ConsMark
 } from './types'
 
 export {
@@ -17,3 +19,9 @@ export {
 export {
     EventEmitter
 } from './eventEmitter'
+
+export declare interface WNode {}
+
+export declare interface WMark {}
+
+export declare interface WSchema extends Schema<keyof WNode, keyof WMark> {}

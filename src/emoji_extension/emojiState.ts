@@ -1,3 +1,4 @@
+import { WSchema } from "@editor/core";
 import { pmFetch } from "@editor/utils";
 import { pmNode } from "prosemirror-model";
 import { Plugin, PluginKey } from "prosemirror-state";
@@ -8,7 +9,7 @@ export interface EmojiState {
   activeEmojiViews: WeakMap<pmNode, EmojiView>
 } 
 
-export const EMOJI_STATE_KEY = new PluginKey<EmojiState>("emoji view tr")
+export const EMOJI_STATE_KEY = new PluginKey<EmojiState, WSchema>("emoji view tr")
 
 function createEmojiView(node: pmNode, view: EditorView, getPos: boolean | (() => number)) {
   const pluginState = EMOJI_STATE_KEY.getState(view.state)
@@ -26,7 +27,7 @@ function createEmojiView(node: pmNode, view: EditorView, getPos: boolean | (() =
   return emojiView
 }
 
-export const emojiPlugin = new Plugin<EmojiState>({
+export const emojiPlugin = new Plugin<EmojiState, WSchema>({
   key: EMOJI_STATE_KEY,
   state: {
     init(_, __) {
@@ -35,6 +36,7 @@ export const emojiPlugin = new Plugin<EmojiState>({
       }
     },
     apply(tr, emojiState) {
+  
       const { activeEmojiViews } = emojiState
       const meta = pmFetch(tr, this)
 

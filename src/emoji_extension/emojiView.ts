@@ -1,4 +1,4 @@
-import { EventEmitter } from "@editor/core";
+import { EventEmitter, WSchema } from "@editor/core";
 import { basicDeselection, basicSelection, deConsView, reactDomAttach, reactDomUnattach } from "@editor/utils";
 import { pmNode } from "prosemirror-model";
 import { EditorState, Selection, TextSelection } from "prosemirror-state";
@@ -11,7 +11,7 @@ import emojiArr from "./data.json"
 import EmojiBar from "./EmojiBar"
 import { ESCAPE_KEY } from ".";
 
-export class EmojiView extends EventEmitter implements NodeView {
+export class EmojiView extends EventEmitter implements NodeView<WSchema> {
 
     node: pmNode
 
@@ -25,6 +25,7 @@ export class EmojiView extends EventEmitter implements NodeView {
 
     constructor(node: pmNode, view: EditorView, getPos: () => number) {
         super()
+        
         this.node = node
         this.dom = document.createElement('emoji');
         (this.dom as HTMLElement).style.cssText = css`

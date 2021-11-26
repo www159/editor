@@ -22,8 +22,8 @@
 **正在。。。**
 - [ ] 链接节点
 - [ ] 一堆bug
-- [ ] e2e测试
-- [ ] coverage标签
+- [x] e2e测试
+- [x] coverage标签
 - [ ] monorepo
 
 道阻且长。

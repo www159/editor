@@ -1,4 +1,4 @@
-import { Extensions } from "@editor/core";
+import { ConsNode, Extensions } from "@editor/core";
 import { recursiveTextSerializer } from "@editor/core/utils/recursiveTextSerializer";
 import { chainCommands } from "prosemirror-commands";
 import { wrappingInputRule } from "prosemirror-inputrules";
@@ -22,6 +22,15 @@ import { getTable } from "./utils/orderTable";
  * 需要定义toText。
  * 附带几个自定义命令。
  */
+
+declare module '@editor/core' {
+    type listNodes = 
+    | 'ordered_list'
+    | 'bullet_list'
+    | 'list_item'
+
+    interface WNode extends ConsNode<listNodes> {}
+}
 
 export const listExtensions: Extensions = [
 /*********************************** 有序列表 ***********************************/
