@@ -15,7 +15,7 @@ export const linkExtensions: Extensions = [
         node: {
             link: {
                 group: 'inline',
-                content: 'text*',
+                content: '(text)*',
                 // atom: true,
                 inline: true,
                 attrs: {
@@ -40,8 +40,9 @@ export const linkExtensions: Extensions = [
 
         shortcutKey() {
             const { link } = nodesFromEditor(this.editor)
+            const { schema } = this.editor
             return {
-                "Ctrl-Alt-l": wrapInLink(link)
+                "Ctrl-Alt-l": wrapInLink(link, schema)
             }
         }
 
@@ -55,7 +56,7 @@ export const linkExtensions: Extensions = [
     {
         type: 'PLUGIN',
         wrappedPlugin() {
-            return [createLinkPlugin(this.editor)]
+            return [createLinkPlugin(this.editor, this.editor.view.dom.parentElement as HTMLElement)]
         }
     }
 ]

@@ -7,14 +7,22 @@ type CheckSelectionParams = {
     doc: pmNode,
 }
 
+const customBlock = [
+    /^math-.+/,
+    /emoji/
+]
+
 const checkSelection = (arg: CheckSelectionParams) => {
     let { selection: { from, to } } = arg
     let content = arg.selection.content().content
     let result = new Array<{ start: number, end: number }>()
 
     content.descendants((node, pos, parent) => {
-        if(node.type.name === 'text') return false
-        if(node.type.name.startsWith('math_')) {
+        // if(node.type.name === 'text') return false
+        const $pos = arg.doc.resolve(pos)
+        // console.log({name: node.type.name, pos, start: Math.max(from + pos - 1, 0),
+        //     end: from + pos + node.nodeSize - 1, from, to})
+        if(customBlock.some(reg => reg.test(node.type.name))) {
             result.push({
                 start: Math.max(from + pos - 1, 0),
                 end: from + pos + node.nodeSize - 1,
@@ -26,7 +34,7 @@ const checkSelection = (arg: CheckSelectionParams) => {
     })
 
     return DecorationSet.create(arg.doc, result.map(
-        ({start, end}) => Decoration.node(start, end, { class: 'math-select' })
+        ({start, end}) => Decoration.node(start, end, { class: 'block-selection' })
     ))
 }
 

@@ -23,7 +23,7 @@ export class LinkView implements NodeView {
 
     editing: boolean
 
-    constructor(node: pmNode, view: EditorView, getPos: () => number, emitter: EventEmitter) {
+    constructor(node: pmNode, view: EditorView, getPos: () => number, emitter: EventEmitter, prompt: HTMLDivElement) {
 
         this.node = node
 
@@ -34,8 +34,6 @@ export class LinkView implements NodeView {
         this.emitter = emitter
 
         this.editing = false
-
-        const prompt = view.dom.parentNode?.appendChild(document.createElement('div'))
 
         if(prompt) this.prompt = prompt
 
@@ -48,13 +46,17 @@ export class LinkView implements NodeView {
             }
         })
 
-        reactDirAttach(HrefPrompt, { emitter: this.emitter }, this.prompt)
-        .then(() => {
-            this.prompt.className = 'link-tip-wrapper'
-            setStyle(this.prompt, css`
-                display: none;
-            `)
+        this.emitter.onChannel('link', 'send prompt', (prompt: HTMLDivElement) => {
+            console.log('recieve')
         })
+
+        // reactDirAttach(HrefPrompt, { emitter: this.emitter }, this.prompt)
+        // .then(() => {
+        //     this.prompt.className = 'link-tip-wrapper'
+        //     setStyle(this.prompt, css`
+        //         display: none;
+        //     `)
+        // })
     }
 
 }

@@ -2,7 +2,7 @@ import { Command } from "prosemirror-commands";
 import { Fragment, pmNode, Schema } from "prosemirror-model";
 import { EditorState, IMeta, Plugin, PluginKey, Transaction } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
-import { findWrapping } from "prosemirror-transform"
+import { findWrapping, Step, StepMap } from "prosemirror-transform"
 import { ComponentType, PureComponent, ReactElement } from "react";
 import ReactDOM from "react-dom";
 
@@ -152,8 +152,24 @@ export function serialCommands(...commands: Command[]) {
     }
 }
 
-export function makeTextFragment<S extends WSchema>(text: string, schema: S): Fragment<S> {
+export function makeTextFragment<S extends WSchema>(text: string | null | undefined, schema: S): Fragment<S> {
+    if(!text) return Fragment.empty
     return Fragment.from(schema.text(text) as pmNode)
+}
+
+export function multiSteps<S extends WSchema>(tr: Transaction<S>, steps: Step[]) {
+    steps.forEach(step => {
+        const mappingStep = step.map(tr.mapping)
+        if(mappingStep) tr.step(mappingStep)
+    })
+    // steps.reduce((prev: Step, curr: Step, index: number) => {
+    //     const mappingStep = curr.map(tr.mapping)
+    //     if(mappingStep) {
+    //         tr.step(mappingStep)
+    //         return mappingStep
+    //     }
+    //     return prev
+    // })
 }
 
 /*********************************** editor assistant  ***********************************/
