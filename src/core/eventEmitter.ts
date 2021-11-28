@@ -3,10 +3,22 @@
  * 事件队列
  */
 
-export class EventEmitter {
-    private handlers: { [key: string]: Function[] } = {}
+declare module '@editor/core' {
+    interface EditorEvents {}
+}
 
-    public on(event: string, fn: Function): () => void  {
+type EventFn = any
+
+type EventWrap = { [key: string]: EventFn }
+
+type EventFns<T extends EventWrap> = {
+    [key in keyof T]: T[key][]
+}
+
+export class EventEmitter<T extends EventWrap> {
+    private handlers: EventFns<T> = {} as EventFns<T>
+
+    public on<ET extends keyof T>(event: ET, fn: T[ET]): () => void  {
         if(!this.handlers[event]) {
             this.handlers[event] = []
         }
@@ -20,9 +32,9 @@ export class EventEmitter {
         }
     }
 
-    public onChannel(channel: string, event: string, fn: Function) {
-        return this.on(bindChannel(channel, event), fn)
-    }
+    // public onChannel(channel: string, event: string, fn: Function) {
+    //     return this.on(bindChannel(channel, event), fn)
+    // }
 
     public emitAsync(event: string, ...args: any): this {
         const handlers = this.handlers[event]
@@ -41,7 +53,7 @@ export class EventEmitter {
         return this
     }
 
-    public emit(event: string, ...args: any): this {
+    public emit<ET extends keyof T>(event: ET, ...args: Parameters<T[ET]>): this {
         const handlers = this.handlers[event]
 
         if(handlers) {
@@ -53,11 +65,11 @@ export class EventEmitter {
         return this
     }
 
-    public emitChannel(channel: string, event: string, ...args: any) {
-        return this.emit(bindChannel(channel, event), args)
-    }
+    // public emitChannel(channel: string, event: string, ...args: any) {
+    //     return this.emit(bindChannel(channel, event), args)
+    // }
 
-    public off(event: string, fn?: Function) {
+    public off<ET extends keyof T>(event: ET, fn?: T[ET]) {
         const handlers = this.handlers[event]
 
         if(handlers) {
@@ -73,7 +85,7 @@ export class EventEmitter {
     }
 
     protected destoryAllListeners() {
-        this.handlers = {}
+        this.handlers = {} as EventFns<T>
     }
 }
 

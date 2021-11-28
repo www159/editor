@@ -19,7 +19,7 @@ function createEmojiView(node: pmNode, view: EditorView, getPos: boolean | (() =
   let emojiView = new EmojiView(node, view, getPos as () => number)
   emojiViews.set(node, emojiView)
 
-  emojiView.on('destory', (removeAllListener: () => void) => {
+  emojiView.on('destroy', (removeAllListener: () => void) => {
     removeAllListener()
     emojiViews.delete(node)
   })

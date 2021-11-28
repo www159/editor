@@ -10,10 +10,20 @@ import { InputRule, inputRules } from 'prosemirror-inputrules'
 import { getClipboardTextSerializer } from './common/clipboardTextSerializer'
 import { ExtensionResolver } from './extensionResolver'
 import { elementFromString } from './utils/elementFromString'
-import { WSchema } from '@editor/core'
+import { EditorEvents, WSchema } from '@editor/core'
 // import { isConstTypeReference } from 'typescript'
 
-export class Editor extends EventEmitter  {
+declare module '@editor/core' {
+    interface EditorEvents {
+        'create': (props: { editor: Editor }) => void
+        'update': (prop: { editor: Editor, tr: Transaction }) => void
+        'selection update': (prop: { editor: Editor, tr: Transaction }) => void
+        'destroy': () => void
+        'selection change': (props: { editor: Editor, tr: Transaction }) => void
+    }
+}
+
+export class Editor extends EventEmitter<EditorEvents>  {
 
     private options: EditorOptions = {
         dom: document.createElement('div'),
@@ -27,6 +37,8 @@ export class Editor extends EventEmitter  {
     }
 
     schema: WSchema
+
+    resolver: ExtensionResolver
 
     public view: EditorView
 
@@ -65,8 +77,8 @@ export class Editor extends EventEmitter  {
 
     private createView() {
         //plugin
-        const resolver = new ExtensionResolver(this.options.extensions, this)
-        let { schema } = resolver
+        this.resolver = new ExtensionResolver(this.options.extensions, this)
+        let { schema } = this.resolver
         // plugins.push(getClipboardTextSerializer(schema))
         // console.log(plugins)
         this.schema = schema
@@ -89,7 +101,7 @@ export class Editor extends EventEmitter  {
         // })
 
         const newState = this.state.reconfigure({
-            plugins: resolver.plugins
+            plugins: this.resolver.plugins
         })
 
         this.view.updateState(newState)

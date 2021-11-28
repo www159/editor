@@ -1,11 +1,16 @@
 import { Editor } from "@editor";
-import { EventEmitter } from "@editor/core";
+import { EditorEvents, EventEmitter } from "@editor/core";
 import { css } from "@editor/core/utils/stringRenderer";
 import { deConsView, pmEmit, pmEmitAsync, reactDirAttach, setStyle } from "@editor/utils";
 import { pmNode } from "prosemirror-model";
 import { EditorView, NodeView } from "prosemirror-view";
-import HrefPrompt from "./HrefPrompt";
 import { LINK_PLUGIN_KEY } from "./linkState";
+
+declare module '@editor/core' {
+    interface EditorEvents {
+        'link ## send prompt': (prompt: HTMLDivElement) => void
+    }
+}
 
 export class LinkView implements NodeView {
 
@@ -17,13 +22,13 @@ export class LinkView implements NodeView {
 
     getPos: () => number
 
-    emitter: EventEmitter
+    emitter: EventEmitter<EditorEvents>
 
     prompt: HTMLDivElement
 
     editing: boolean
 
-    constructor(node: pmNode, view: EditorView, getPos: () => number, emitter: EventEmitter, prompt: HTMLDivElement) {
+    constructor(node: pmNode, view: EditorView, getPos: () => number, emitter: EventEmitter<EditorEvents>, prompt: HTMLDivElement) {
 
         this.node = node
 
@@ -46,7 +51,7 @@ export class LinkView implements NodeView {
             }
         })
 
-        this.emitter.onChannel('link', 'send prompt', (prompt: HTMLDivElement) => {
+        this.emitter.on('link ## send prompt', (prompt: HTMLDivElement) => {
             console.log('recieve')
         })
 

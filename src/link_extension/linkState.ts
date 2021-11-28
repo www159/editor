@@ -1,4 +1,4 @@
-import { EventEmitter } from "@editor/core";
+import { EditorEvents, EventEmitter } from "@editor/core";
 import { pmFetch, reactDirAttach, setStyle } from "@editor/utils";
 import { css } from "@editor/core/utils/stringRenderer";
 import { pmNode, Schema } from "prosemirror-model";
@@ -21,7 +21,7 @@ interface linkMeta {
 
 export const LINK_PLUGIN_KEY = new PluginKey<linkState, Schema, linkMeta>('link plugin key')
 
-function createLinkView(node: pmNode, view: EditorView, getPos: () => number, emitter: EventEmitter, prompt: HTMLDivElement) {
+function createLinkView(node: pmNode, view: EditorView, getPos: () => number, emitter: EventEmitter<EditorEvents>, prompt: HTMLDivElement) {
     const linkView = new LinkView(node, view, getPos, emitter, prompt)
     const { state } = view
     const { storedLink } = LINK_PLUGIN_KEY.getState(state) as linkState
@@ -29,7 +29,7 @@ function createLinkView(node: pmNode, view: EditorView, getPos: () => number, em
     return linkView
 }
 
-export function createLinkPlugin(emitter: EventEmitter, topDOM: HTMLElement) {
+export function createLinkPlugin(emitter: EventEmitter<EditorEvents>, topDOM: HTMLElement) {
     return new Plugin<linkState, Schema, linkMeta>({
 
         key: LINK_PLUGIN_KEY,

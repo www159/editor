@@ -110,3 +110,5 @@ export type ConsNode<T extends string = any> = {
 export type ConsMark<T extends string = any> = {
     [key in T]: MarkSpec
 }
+
+//*********************************** event emitter ***********************************/

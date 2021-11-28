@@ -14,12 +14,11 @@
   1. 光标在其中不会弹出对话框
   2. 光标在其中按'enter'进入对话框
   3. link是inline不支持换行
-  4. link重叠：
-      - 选区小于link区域取消link
-      - 选区大于link区合并成新的更大的link
-      - 选区一段与link重叠。合并link
+  4. link 重叠
+    - 如果选区包含其他link，则立刻取消所有link。
+    - 如果选区包含其他link的一部分，视作非法。应该有弹窗报告。
   5. link相邻
-      - 判断是否能够join。join到原先的link中
+    - 判断是否能够join。join到原先的link中
 
 - hover
   - 显示label
@@ -29,4 +28,4 @@
 
 
 ## 更新
-<!-- 1. 这次使用一下声明合并了的schema -->
+1. 这次使用一下声明合并了的schema

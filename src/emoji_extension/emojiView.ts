@@ -9,9 +9,19 @@ import { EMOJI_STATE_KEY } from "./emojiState";
 import emojiArr from "./data.json"
 
 import EmojiBar from "./EmojiBar"
-import { ESCAPE_KEY } from ".";
+import { EmojiEvents, ESCAPE_KEY } from ".";
 
-export class EmojiView extends EventEmitter implements NodeView<WSchema> {
+declare module '@editor/emoji_extension' {
+    interface EmojiEvents {
+        'select index': (index: number) => void
+        'escape': (key: ESCAPE_KEY) => void
+        'select next pos': () => void
+        'destroy': (removeAllListener: () => void) => void
+        'react destroy': () => void
+    }
+}
+
+export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSchema> {
 
     node: pmNode
 
