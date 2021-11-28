@@ -7,18 +7,18 @@ declare module '@editor/core' {
     interface EditorEvents {}
 }
 
-type EventFn = any
+type EventWrap = { [key: string]: any }
 
-type EventWrap = { [key: string]: EventFn }
+type TupFunc<T extends any[]> = (...args: T) => void
 
 type EventFns<T extends EventWrap> = {
-    [key in keyof T]: T[key][]
+    [key in keyof T]: ((...args: T[key]) => void)[]
 }
 
 export class EventEmitter<T extends EventWrap> {
     private handlers: EventFns<T> = {} as EventFns<T>
 
-    public on<ET extends keyof T>(event: ET, fn: T[ET]): () => void  {
+    public on<EK extends keyof T>(event: EK, fn: TupFunc<T[EK]>): () => void  {
         if(!this.handlers[event]) {
             this.handlers[event] = []
         }
@@ -36,24 +36,24 @@ export class EventEmitter<T extends EventWrap> {
     //     return this.on(bindChannel(channel, event), fn)
     // }
 
-    public emitAsync(event: string, ...args: any): this {
-        const handlers = this.handlers[event]
+    // public emitAsync(event: string, ...args: any): this {
+    //     const handlers = this.handlers[event]
         
-        let awaitFunc = new Array<Promise<void>>()
-        if(handlers) {
-            handlers.forEach(handler => {
-                awaitFunc.push(new Promise<void>((res) => {
-                    handler.apply(this, args)
-                    res()
-                }))
-            })
-        }
-        Promise.all(awaitFunc)
+    //     let awaitFunc = new Array<Promise<void>>()
+    //     if(handlers) {
+    //         handlers.forEach(handler => {
+    //             awaitFunc.push(new Promise<void>((res) => {
+    //                 handler.apply(this, args)
+    //                 res()
+    //             }))
+    //         })
+    //     }
+    //     Promise.all(awaitFunc)
 
-        return this
-    }
+    //     return this
+    // }
 
-    public emit<ET extends keyof T>(event: ET, ...args: Parameters<T[ET]>): this {
+    public emit<EK extends keyof T>(event: EK, ...args: T[EK]): this {
         const handlers = this.handlers[event]
 
         if(handlers) {
@@ -69,7 +69,7 @@ export class EventEmitter<T extends EventWrap> {
     //     return this.emit(bindChannel(channel, event), args)
     // }
 
-    public off<ET extends keyof T>(event: ET, fn?: T[ET]) {
+    public off<EK extends keyof T>(event: EK, fn?: TupFunc<T[EK]>) {
         const handlers = this.handlers[event]
 
         if(handlers) {

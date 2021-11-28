@@ -8,7 +8,7 @@ import { LINK_PLUGIN_KEY } from "./linkState";
 
 declare module '@editor/core' {
     interface EditorEvents {
-        'link ## send prompt': (prompt: HTMLDivElement) => void
+        'link ## send prompt': [prompt: HTMLDivElement]
     }
 }
 
@@ -54,7 +54,9 @@ export class LinkView implements NodeView {
         this.emitter.on('link ## send prompt', (prompt: HTMLDivElement) => {
             console.log('recieve')
         })
+        // this.emitter.on('link ## send prompt', (prompt: HTMLDivElement) => {
 
+        // })
         // reactDirAttach(HrefPrompt, { emitter: this.emitter }, this.prompt)
         // .then(() => {
         //     this.prompt.className = 'link-tip-wrapper'

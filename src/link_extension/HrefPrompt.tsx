@@ -1,8 +1,17 @@
-import { EventEmitter } from '@editor/core'
+import { EditorEvents, EventEmitter } from '@editor/core'
 import React, { useEffect, useRef, useState } from 'react'
 
 interface HrefPromptProps {
-  emitter: EventEmitter
+  emitter: EventEmitter<EditorEvents>
+}
+
+declare module '@editor/core' {
+  interface EditorEvents {
+    'link ## popup input': [href: string]
+    'link ## blur': []
+    'link ## enter input': []
+    'link ## leave input': [href: string]
+  }
 }
 
 const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter }) => {
@@ -13,18 +22,18 @@ const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter }) => {
   const [href, setHref] = useState('')
 
   useEffect(() => {
-    let offPopup = emitter.on('popup input', (href: string) => {
+    let offPopup = emitter.on('link ## popup input', (href: string) => {
       
       // inputRef.current?.setAttribute('value', href)
       setHref(href)
       
     })
 
-    let offBlur = emitter.on('blur', () => {
+    let offBlur = emitter.on('link ## blur', () => {
       inputRef.current?.blur()
     })
 
-    let offEnter = emitter.on('enter input', () => {
+    let offEnter = emitter.on('link ## enter input', () => {
       inputRef.current?.focus()
       const { length } = inputRef.current?.value as string
       inputRef.current?.setSelectionRange(length, length)
@@ -55,7 +64,7 @@ const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter }) => {
           const { key, metaKey } = e
           if(key === 'Enter' && !metaKey) {
             inputRef.current?.blur()
-            emitter.emit('leave input', href)
+            emitter.emit('link ## leave input', href)
           }
         }} />
     </div>

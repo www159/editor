@@ -15,11 +15,11 @@ import { EditorEvents, WSchema } from '@editor/core'
 
 declare module '@editor/core' {
     interface EditorEvents {
-        'create': (props: { editor: Editor }) => void
-        'update': (prop: { editor: Editor, tr: Transaction }) => void
-        'selection update': (prop: { editor: Editor, tr: Transaction }) => void
-        'destroy': () => void
-        'selection change': (props: { editor: Editor, tr: Transaction }) => void
+        'create': [props: { editor: Editor }]
+        'update': [prop: { editor: Editor, tr: Transaction }]
+        'selection update': [prop: { editor: Editor, tr: Transaction }]
+        'destroy': []
+        'selection change': [props: { editor: Editor, tr: Transaction }]
     }
 }
 

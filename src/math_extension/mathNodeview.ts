@@ -10,6 +10,7 @@ import { collaspeMathCmd } from './commands/collapseMathCmd';
 import { MathPluginState, MATH_PLUGIN_KEY } from './mathPlugin';
 import {  MATH_PREVIEW_KEY } from './plugins/mathPreview';
 import { deConsView, pmEmit } from '@editor/utils';
+import { MathEvents } from '@editor/math_extension';
 // import { createMathPreviewPlugin, MATH_PREVIEW_KEY } from './plugins/mathPreview';
 
 export interface CursorPosObserver {
@@ -22,7 +23,13 @@ interface MathViewOptions {
     katexOptions?: KatexOptions
 }
 
-export class MathView extends EventEmitter implements NodeView, CursorPosObserver {
+declare module '@editor/math_extension' {
+    interface MathEvents {
+        'destroy': []
+    }
+}
+
+export class MathView extends EventEmitter<MathEvents> implements NodeView, CursorPosObserver {
 
     private doc: pmNode
     private outerView: EditorView

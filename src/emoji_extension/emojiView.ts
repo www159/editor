@@ -13,11 +13,11 @@ import { EmojiEvents, ESCAPE_KEY } from ".";
 
 declare module '@editor/emoji_extension' {
     interface EmojiEvents {
-        'select index': (index: number) => void
-        'escape': (key: ESCAPE_KEY) => void
-        'select next pos': () => void
-        'destroy': (removeAllListener: () => void) => void
-        'react destroy': () => void
+        'select index': [index: number]
+        'escape': [key: ESCAPE_KEY]
+        'select next pos':[]
+        'destroy': [removeAllListener: () => void]
+        'react destroy': []
     }
 }
 

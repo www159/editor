@@ -4,7 +4,7 @@ import React, { ReactElement, useCallback, useEffect, useRef, useState } from "r
 // import { Wrapper } from "./style"
 import emojiArr from "../data.json"
 import { a, useSprings } from "@react-spring/web"
-import { ESCAPE_KEY } from ".."
+import { ESCAPE_KEY, EmojiEvents } from ".."
 
 /**
  * 需要的组件
@@ -15,7 +15,7 @@ import { ESCAPE_KEY } from ".."
 const EMOJI_PER_SHEET = 16
 
 export interface AppProps {
-  emitter: EventEmitter
+  emitter: EventEmitter<EmojiEvents>
 }
 
 function calcIndex(sheet: number, row: number, col: number) {
