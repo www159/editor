@@ -67,7 +67,7 @@
     "serve:dev": "cross-env NODE_ENV=development webpack server -c ./example/webpack.config.js",
     "build": "cross-env NODE_ENV=production webpack -c ./example/webpack.config.js",
     "postinstall": "patch-package",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "config": {
     "commitizen": {
