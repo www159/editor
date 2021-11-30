@@ -42,6 +42,7 @@ const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter }) => {
     return () => {
       offPopup()
       offBlur()
+      offEnter()
 
     }
   }, [])

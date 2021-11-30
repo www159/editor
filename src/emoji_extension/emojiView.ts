@@ -4,8 +4,6 @@ import { pmNode } from "prosemirror-model";
 import { EditorState, Selection, TextSelection } from "prosemirror-state";
 import { EditorView, NodeView } from "prosemirror-view";
 import { css } from "@editor/core/utils/stringRenderer";
-
-import { EMOJI_STATE_KEY } from "./emojiState";
 import emojiArr from "./data.json"
 
 import EmojiBar from "./EmojiBar"
@@ -53,31 +51,11 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
 
         //dom和react结合，怪怪的。
         this.on('select index', this.exitView)
-        this.on('escape', (key: ESCAPE_KEY) => {
-            if(key === 'escape left') {
-                // const {  }
-                setTimeout(() => {
-                    const { tr, dispatch } = deConsView(this.outerView)
-                    dispatch(tr.setSelection(TextSelection.create(tr.doc, this.getPos())))
-                }, 0)
-            }
-        })
-        this.on('select next pos', () => {
-            //利用单线程异步的滞后性。
-            setTimeout(() => {
-                const { tr, dispatch } = deConsView(this.outerView)
-                const nextPos = this.getPos() + 2
-                this.outerView.focus()
-                dispatch(tr.setSelection(TextSelection.create(tr.doc, nextPos)).scrollIntoView());
-            }, 0)
-        })
-        // this.on('emoji bar distroy', this.exitView)
-        // console.log('doc pos', this.outerView.coordsAtPos(0), (this.outerView.dom.parentNode as HTMLElement).getBoundingClientRect())
     }
 
     selectNode() {
         basicSelection(this.dom)
-        // setTimeout(this.open, 0)
+
         this.open()
     }
 
@@ -87,10 +65,7 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
         this.emojiBar && this.dom.contains(this.emojiBar) && this.dom.removeChild(this.emojiBar)
         this.close()
 
-        // this.outerView.dispatch(this.outerView.state.tr)
-
         //如果没选且光标移动，删除自己
-        // console.log(this.node.attrs.index)
         if(this.node.attrs.index === -1) {
             const { tr, dispatch } = deConsView(this.outerView)
             const pos = this.getPos()
@@ -116,7 +91,6 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
     close() {
         if(this.emojiBar) {
             reactDomUnattach(this.emojiBar)
-            // console.log(this.dom.firstChild === this.emojiBar)
             this.emojiBar = null
         }
     }
@@ -150,8 +124,6 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
     }
 
     stopEvent(event: Event) {
-        // console.log(event, this.emojiBar)
-        // return true
         return !!(this.emojiBar && event.target && this.emojiBar.contains(event.target as Node))
     }
 

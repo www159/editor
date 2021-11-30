@@ -83,7 +83,7 @@ const App: React.FC<AppProps> = ({ emitter }) => {
   }
 
   useEffect(() => {
-    const off = emitter.on('escape', (dir: ESCAPE_KEY) => {
+    const off = emitter.on('escape', (dir) => {
 
       if(dir === 'escape left') return
 

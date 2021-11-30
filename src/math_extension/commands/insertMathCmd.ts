@@ -11,14 +11,26 @@ export function insertMathCmd(mathNodeType: NodeType, initialText = ''): Command
         if(!$from.parent.canReplaceWith(index, index, mathNodeType)) {
             return false
         }
-
+        /*
+        +++++LAST STEP: 可以插入math节点+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
         if(dispatch) {
             let mathNode = mathNodeType.create(
                 {}, 
                 initialText ? state.schema.text(initialText) : null 
                 )
             let { tr } = state
-            
+            tr.replaceSelectionWith(mathNode)
             dispatch(tr.setSelection(NodeSelection.create(tr.doc, $from.pos)))
         }
 

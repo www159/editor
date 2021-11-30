@@ -42,7 +42,7 @@ export const linkExtensions: Extensions = [
             const { link } = nodesFromEditor(this.editor)
             const { schema } = this.editor
             return {
-                "Ctrl-Alt-l": wrapInLink(link, schema)
+                "Ctrl-Alt-l": wrapInLink(link, schema, this.editor)
             }
         }
 

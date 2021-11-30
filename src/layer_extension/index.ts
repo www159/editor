@@ -1,14 +1,32 @@
 import { Extension } from "@editor/core";
-import { LAYER_PLUGIN_KEY } from "./layerState";
 
-const layer_extension: Extension = {
-    type: 'PLUGIN',
-    wrappedPlugin() {
-        return []
+declare module '@editor/core' {
+
+    interface LayerEvents {
+        'layer ## layer': [content: string, delay: number, icon?: number]
+        'layer ## confirm': [content: string, button?: [btn1: () => void, btn2?: () => void], icon?: number]
+    }
+
+    interface EditorEvents extends LayerEvents {}
+}
+
+export const layerExtension: Extension = {
+    type: 'REDUCER',
+
+    storage: {
+        layer: document.createElement('div')
+    },
+    reducer() {
+        const { emitter, storage: { layer } } = this
+        emitter.on('layer ## layer', createLayer)
+        emitter.on('layer ## confirm', createConfirm)
     }
 }
 
-export {
-    LAYER_PLUGIN_KEY,
-    layer_extension,
+function createLayer(content: string, delay: number, icon?: number) {
+
+}
+
+function createConfirm(content: string, button?: [btn: () => void, btn2?: () => void], icon?: number) {
+
 }

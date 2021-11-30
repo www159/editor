@@ -11,7 +11,6 @@ export function newLineInList(itemType: NodeType): Command {
             { parent } = $from,
             grandParent = $from.node(-1),
             wrapType = $from.parent.type
-        //如果不在list中
         if(
             $from.depth < 2 ||
             grandParent.type !== itemType ||
@@ -19,7 +18,19 @@ export function newLineInList(itemType: NodeType): Command {
         ) {
             return false
         }
-
+        /*
+        +++++LAST STEP: 在list中+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
         return Enter(state, dispatch)
     }
 }

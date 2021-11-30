@@ -22,7 +22,19 @@ export function deleteListItem(itemType: NodeType, view: EditorView): Command {
         ) {
             return false
         }
-
+        /*
+        +++++LAST STEP: 不在list中，选区节点同级+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
         //如果被上一层嵌套或者在开头
         if(
             ((grandParent.type === itemType &&
@@ -37,14 +49,6 @@ export function deleteListItem(itemType: NodeType, view: EditorView): Command {
             }
         }
 
-
-        /**
-         * 如果上一层被嵌套，则插入上一侧末尾
-         */
-        // console.log($from.nodeBefore?.lastChild)
-        // let beforeItem = state.doc.resolve($from.before(-1)).nodeBefore as pmNode,
-        //     lastChildOfBeforeItem = beforeItem && beforeItem.lastChild as pmNode,
-        //     lastNested = lastChildOfBeforeItem && lastChildOfBeforeItem.content.child(0).type === itemType
         //如果和上一层同级
         return serialCommands(
             // lastNested ? 

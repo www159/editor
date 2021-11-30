@@ -12,6 +12,7 @@ export class ExtensionResolver {
     schema: WSchema
 
     extensions: Extensions
+
     //每个extension只有一个nodes与marks
     constructor(extensions: Extensions, editor: Editor) {
         this.extensions = extensions
@@ -76,14 +77,13 @@ export class ExtensionResolver {
             let plugins = new Array<Plugin>()
             //绑定nodetype | marktype
             // if(extension.type !== 'PLUGIN') {
-                
-                plugins = plugins.concat(bindFunc(extension, {
-                    editor: this.editor,
-                    type: getType(type === 'MARK' ? 
-                                    extension.mark as MarkSpec : 
-                                    extension.node as NodeSpec, 
-                                    this.schema, type)
-                }))
+            plugins = plugins.concat(bindFunc(extension, {
+                editor: this.editor,
+                type: getType(type === 'MARK' ? 
+                                extension.mark as MarkSpec : 
+                                extension.node as NodeSpec, 
+                                this.schema, type)
+            }))
             // }
 
             return plugins.concat(extension.plugins as Array<Plugin>)

@@ -10,6 +10,7 @@ export const mathDeleteCmd: Command = (state: EditorState, dispatch: DispatchFun
 	let posBefore = $from.posAtIndex(index-1)
 
 	const canDispatch = new Procedure({ nodeBefore, posBefore, state })
+	//@experiental
 	.then(({ nodeBefore, posBefore, state }) => {
 		if(!nodeBefore) {
 			posBefore = $from.posAtIndex($from.index(-1) - 1, -1)

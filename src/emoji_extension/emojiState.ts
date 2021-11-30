@@ -1,7 +1,8 @@
 import { WSchema } from "@editor/core";
+import { ESCAPE_KEY } from "@editor/emoji_extension";
 import { pmFetch } from "@editor/utils";
 import { pmNode } from "prosemirror-model";
-import { Plugin, PluginKey } from "prosemirror-state";
+import { Plugin, PluginKey, TextSelection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { EmojiView } from "./emojiView";
 
@@ -9,7 +10,14 @@ export interface EmojiState {
   activeEmojiViews: WeakMap<pmNode, EmojiView>
 } 
 
-export const EMOJI_STATE_KEY = new PluginKey<EmojiState, WSchema>("emoji view tr")
+export interface EmojiMeta {
+  'escape': {
+    node: pmNode<WSchema>,
+    key: ESCAPE_KEY,
+  }
+}
+
+export const EMOJI_STATE_KEY = new PluginKey<EmojiState, WSchema, EmojiMeta>("emoji view tr")
 
 function createEmojiView(node: pmNode, view: EditorView, getPos: boolean | (() => number)) {
   const pluginState = EMOJI_STATE_KEY.getState(view.state)
@@ -27,7 +35,7 @@ function createEmojiView(node: pmNode, view: EditorView, getPos: boolean | (() =
   return emojiView
 }
 
-export const emojiPlugin = new Plugin<EmojiState, WSchema>({
+export const emojiPlugin = new Plugin<EmojiState, WSchema, EmojiMeta>({
   key: EMOJI_STATE_KEY,
   state: {
     init(_, __) {
@@ -42,6 +50,7 @@ export const emojiPlugin = new Plugin<EmojiState, WSchema>({
 
       if(meta) {
         const { action, payload } = meta
+        //收到案件，dispatch设为此plugin
         if(action === 'escape') {
           const { node, key } = payload
           const emojiView = activeEmojiViews.get(node)
@@ -53,7 +62,29 @@ export const emojiPlugin = new Plugin<EmojiState, WSchema>({
       return {
         activeEmojiViews
       }
+    
     }
+  },
+
+  appendTransaction(trans, _, newState) {
+    const meta = pmFetch(trans[0], EMOJI_STATE_KEY)
+    if(meta) {
+      const { action } = meta
+      if(action === 'escape') {
+        const { node, key } = meta.payload
+        const { activeEmojiViews } = EMOJI_STATE_KEY.getState(newState) as EmojiState
+
+        const pos = activeEmojiViews.get(node)?.getPos()
+        if(!pos) return
+        switch(key) {
+          //回车键退出。这是pm事件
+          case 'enter': return newState.tr.setSelection(TextSelection.create(newState.tr.doc, pos + 2)).scrollIntoView()
+          //光标左移
+          case 'escape left': return newState.tr.setSelection(TextSelection.create(newState.tr.doc, pos))
+        }
+      }
+    }
+    return
   },
   props: {
     nodeViews: {
@@ -67,3 +98,4 @@ export const emojiPlugin = new Plugin<EmojiState, WSchema>({
     // }
   }
 })
+

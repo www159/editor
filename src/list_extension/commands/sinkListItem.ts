@@ -19,17 +19,52 @@ export function sinkListItem(itemType: NodeType): Command {
             range = $from.blockRange($to, node => node.childCount !== 0 && node.firstChild?.type == itemType )
 
         if(!range) return false
+        /*
+        +++++LAST STEP: 选区在list中+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
 
         let { startIndex, parent } = range
 
         if(startIndex === 0) return false
-
+        /*
+        +++++LAST STEP: 不是list中第一个节点+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
         let nodeBefore = parent.child(startIndex - 1)
 
         if(nodeBefore.type !== itemType) return false
-
-        console.log(getNextAttr(parent))
-
+        /*
+        +++++LAST STEP: 不是list中第一个listItem+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
         if(dispatch) {
             //如果上一个节点也是嵌套的话，融入上一个节点
             // debugger

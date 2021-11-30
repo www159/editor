@@ -10,32 +10,46 @@ export function splitListItem(itemType: NodeType): Command {
         let { $from, $to, node } = state.selection as NodeSelection
         if(
             (node && node.isBlock) ||   //满足content
-            $from.depth < 2 ||          //在list中
+            $from.depth < 2 ||          //不在list中
             !$from.sameParent($to)       //不在同一个list中
         ) {
             return false
         }
-
+        /*
+        +++++LAST STEP: 在同一个list中+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
         let grandParent = $from.node(-1)
         //保证当前在list-item中
         if(grandParent.type !== itemType) {
             return false
         }
-
-        /**
-         * 如果当前在list-item中
-         * 那么grandParent就是*-list
-         * 如果listNode中没有内容，则退回上一层list
-         */
+        /*
+        +++++LAST STEP: 在listItem中+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
         if(
             $from.parent.content.size === 0 &&              //list-item没有内容
             grandParent.childCount == $from.indexAfter(-1)  //是最后一个li
         ) {
-
-            /**
-             * 如果内容为空，且不是嵌套节点
-             * 默认的enter有lift功能
-             */
             if(
                 $from.depth == 2 ||
                 $from.node(-3).type !== itemType ||
@@ -43,6 +57,19 @@ export function splitListItem(itemType: NodeType): Command {
             ) {
                 return false
             }
+            /*
+            +++++LAST STEP: 内容为空则交给默认enter+++++
+            
+                          +------+
+                          |------|
+                          |------|
+                          |------|
+                      *---+------+---*
+                       *------------*
+                         *--------*
+                           *----*
+                             **
+            */
 
             /**
              * 是嵌套节点则需要退化为上一层的后继
@@ -81,14 +108,6 @@ export function splitListItem(itemType: NodeType): Command {
             }
             return true
         }
-
-        // let nextType = $to.pos == $from.end() ? grandParent.contentMatchAt(0).defaultType : null
-        // let tr = state.tr.delete($from.pos, $to.pos)
-        // let types = nextType && [null, {type: nextType}]
-        // if (!canSplit(tr.doc, $from.pos, 2, types)) return false
-        // if (dispatch) dispatch(tr.split($from.pos, 2, types).scrollIntoView())
-        // return true
-
         /**
          * 如果当前节点不为空，那么自动往下推一行
          * 如果从中间切断(按回车)还需要分裂节点
@@ -98,9 +117,22 @@ export function splitListItem(itemType: NodeType): Command {
             tr = state.tr.delete($from.pos, $to.pos),        //删除选中区
             types = nextItemType && [ null, { type: nextItemType }]
 
-    if(!canSplit(tr.doc, $from.pos, 2, types)) {
+        if(!canSplit(tr.doc, $from.pos, 2, types)) {
             return false
         } 
+        /*
+        +++++LAST STEP: 能够拆分listItem+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
         tr.split($from.pos, 2, types)
         let { $to: afterSplit$to } = tr.selection
         afterSplit$to = tr.doc.resolve(afterSplit$to.end())

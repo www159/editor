@@ -6,6 +6,8 @@ import { listExtensions } from './list_extension'
 import { emojiExtensions } from './emoji_extension'
 import { baseMarkExtensions } from './base_mark_extension'
 import { linkExtensions } from './link_extension'
+
+import { layerExtension } from './layer_extension'
 export {
     Editor
 } from './core'
@@ -20,6 +22,7 @@ extensions.push(
     headingExtension,
     ...listExtensions,  
     ...emojiExtensions,
+    layerExtension,
 )
 
 // console.log(extensions)

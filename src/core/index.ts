@@ -1,17 +1,5 @@
 import { NodeSpec, Schema } from 'prosemirror-model'
 
-export type {
-    Extension,
-    DispatchFunc,
-    Extensions,
-    ExtensionType,
-    Realize,
-    InputRulesFunc,
-    shortcutKeyFunc,
-    ConsNode,
-    ConsMark
-} from './types'
-
 export {
     Editor
 } from './editor'

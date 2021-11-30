@@ -3,7 +3,6 @@ import { EditorState, Selection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { DispatchFunc } from "@editor/core";
 import { displayMode } from "../mathPlugin";
-import { Procedure } from "@editor/utils";
 export function collaspeMathCmd(
     outerView: EditorView,
     dir: (1 | -1),
@@ -20,13 +19,19 @@ export function collaspeMathCmd(
         if(requireEmptySelection && innerTo !== innerFrom) {
             return false
         }
-
-        // let currentPos = dir > 0 ? innerTo : innerFrom
-
-        if(requireEmptySelection && innerTo !== innerFrom) return false
-
-        // debugger
-
+        /*
+        +++++LAST STEP: 空选区则使用默认按键+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
         let currentPos = (dir > 0) ? innerTo : innerFrom
         
         if(requireOnBorder) {
@@ -34,7 +39,19 @@ export function collaspeMathCmd(
             if(dir > 0 && currentPos < nodeSize) return false
             if(dir < 0 && currentPos > 0) return false
         }
-        // if(!canDispatch) return false
+        /*
+        +++++LAST STEP: 光标不在边界则使用默认按键+++++
+        
+                      +------+
+                      |------|
+                      |------|
+                      |------|
+                  *---+------+---*
+                   *------------*
+                     *--------*
+                       *----*
+                         **
+        */
 
         if(dispatch) {
             let targetPos = (dir > 0) ? outerTo : outerFrom

@@ -1,4 +1,4 @@
-import { Editor, Extension } from "@editor/core";
+import { Editor, EditorEvents, Extension } from "@editor/core";
 import { inputRules } from "prosemirror-inputrules";
 import { keymap } from "prosemirror-keymap";
 import { NodeType, MarkType } from "prosemirror-model";
@@ -8,6 +8,8 @@ export function bindFunc(extension: Extension, context: {
     editor: Editor,
     type: NodeType | MarkType | null
 }): Plugin[] {
+    const { storage } = extension
+    const { editor } = context
     let plugins = new Array<Plugin>()
     if(extension.inputRules) {
         // console.log(extension.inputRules.apply(context))
@@ -24,6 +26,26 @@ export function bindFunc(extension: Extension, context: {
 
     if(extension.wrappedPlugin) {
         plugins = plugins.concat(extension.wrappedPlugin.apply(context))
+    }
+
+    if(extension.reducer) {
+        extension.reducer.apply({ emitter: context.editor, storage })
+    }
+
+    if(extension.onCreate) {
+        extension.onCreate.bind({
+            editor,
+            storage,
+        })
+        editor.on('create', extension.onCreate)
+    }
+
+    if(extension.onUpdate) {
+        extension.onUpdate.bind({
+            editor,
+            storage,
+        })
+        editor.on('update', extension.onUpdate)
     }
 
     return plugins

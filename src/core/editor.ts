@@ -4,7 +4,7 @@ import { EditorView } from 'prosemirror-view'
 import { EventEmitter } from './eventEmitter'
 import {
     EditorOptions, Extension
-} from './types'
+} from '.'
 import { keymap } from 'prosemirror-keymap'
 import { InputRule, inputRules } from 'prosemirror-inputrules'
 import { getClipboardTextSerializer } from './common/clipboardTextSerializer'
@@ -16,8 +16,8 @@ import { EditorEvents, WSchema } from '@editor/core'
 declare module '@editor/core' {
     interface EditorEvents {
         'create': [props: { editor: Editor }]
-        'update': [prop: { editor: Editor, tr: Transaction }]
-        'selection update': [prop: { editor: Editor, tr: Transaction }]
+        'update': [props: { editor: Editor, tr: Transaction }]
+        'selection update': [props: { editor: Editor, tr: Transaction }]
         'destroy': []
         'selection change': [props: { editor: Editor, tr: Transaction }]
     }
@@ -38,7 +38,7 @@ export class Editor extends EventEmitter<EditorEvents>  {
 
     schema: WSchema
 
-    resolver: ExtensionResolver
+    // resolver: ExtensionResolver
 
     public view: EditorView
 
@@ -77,8 +77,8 @@ export class Editor extends EventEmitter<EditorEvents>  {
 
     private createView() {
         //plugin
-        this.resolver = new ExtensionResolver(this.options.extensions, this)
-        let { schema } = this.resolver
+        const resolver = new ExtensionResolver(this.options.extensions, this)
+        let { schema } = resolver
         // plugins.push(getClipboardTextSerializer(schema))
         // console.log(plugins)
         this.schema = schema
@@ -101,7 +101,7 @@ export class Editor extends EventEmitter<EditorEvents>  {
         // })
 
         const newState = this.state.reconfigure({
-            plugins: this.resolver.plugins
+            plugins: resolver.plugins
         })
 
         this.view.updateState(newState)

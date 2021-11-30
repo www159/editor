@@ -3,7 +3,7 @@ import { MenuItem } from "prosemirror-menu";
 import { NodeSpec, NodeType, MarkSpec, Node, MarkType, Mark } from "prosemirror-model";
 import { NodeSelection, Plugin, Transaction } from "prosemirror-state";
 import { Command, Keymap } from "prosemirror-commands";
-import { Editor, WSchema } from ".";
+import { Editor, EditorEvents, WSchema, EventEmitter } from ".";
 
 /*********************************** model-fixed ***********************************/
 
@@ -34,8 +34,8 @@ declare module 'prosemirror-model' {
     }
 }
 
+declare module '@editor/core' {
 /*********************************** extension func ***********************************/
-
 
 export type DispatchFunc = ((tr: Transaction) => void) | undefined
 
@@ -52,6 +52,7 @@ export type shortcutKeyFunc = (this: {
 export type wrappedPluginFunc = (this: {
     editor: Editor,
 }) => Array<Plugin>
+
 /*********************************** basic event ***********************************/
 
 interface BasicEvent {
@@ -63,11 +64,28 @@ interface BasicEvent {
 
 /*********************************** Extension ***********************************/
 
-export interface Extension extends Partial<BasicEvent> {
+export interface Extension<Storage = any> {
     type: ExtensionType
     node?: { [name: string]: NodeSpec } 
     mark?: { [name: string]: MarkSpec }
     plugins?: Array<Plugin>
+
+    storage?: Storage
+
+    onCreate?: (this: {
+        editor: Editor
+        storage: Storage
+    }) => void
+
+    onUpdate?: (this: {
+        editor: Editor
+        storage: Storage
+    }) => void
+
+    reducer?: (this: {
+        emitter: EventEmitter<EditorEvents>
+        storage: Storage
+    }) => void
 
     inputRules?: InputRulesFunc
 
@@ -76,6 +94,7 @@ export interface Extension extends Partial<BasicEvent> {
     wrappedPlugin?: wrappedPluginFunc
 
     priority?: number
+
 
     // commands?:(this: {
     //     editor: Editor,
@@ -96,7 +115,7 @@ export interface EditorOptions extends BasicEvent {
     json?: JSON
 }
 
-export type ExtensionType = 'MARK' | 'NODE' | 'PLUGIN'
+export type ExtensionType = 'MARK' | 'NODE' | 'PLUGIN' | 'REDUCER'
 
 /*********************************** commands ***********************************/
 
@@ -110,5 +129,4 @@ export type ConsNode<T extends string = any> = {
 export type ConsMark<T extends string = any> = {
     [key in T]: MarkSpec
 }
-
-//*********************************** event emitter ***********************************/
+}

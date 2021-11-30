@@ -1,4 +1,4 @@
-import { DispatchFunc, Realize } from "@editor/core";
+import { DispatchFunc } from "@editor/core";
 import { useFakeServer } from "cypress/types/sinon";
 import { Command } from "prosemirror-commands";
 import { Fragment, NodeRange, NodeType, pmNode, Slice } from "prosemirror-model";
@@ -52,7 +52,9 @@ function liftToOuterList(
         )
     }
 
-    dispatch && dispatch(tr.lift(range, liftTarget(range) as number).scrollIntoView())
+    if(dispatch) {
+        dispatch(tr.lift(range, liftTarget(range) as number).scrollIntoView())
+    }
     return true
 }
 
