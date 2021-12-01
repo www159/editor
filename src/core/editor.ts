@@ -3,7 +3,7 @@ import { EditorState, Plugin, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { EventEmitter } from './eventEmitter'
 import {
-    EditorOptions, Extension
+    EditorOptions, EditorPorts, Extension
 } from '.'
 import { keymap } from 'prosemirror-keymap'
 import { InputRule, inputRules } from 'prosemirror-inputrules'
@@ -23,7 +23,7 @@ declare module '@editor/core' {
     }
 }
 
-export class Editor extends EventEmitter<EditorEvents>  {
+export class Editor extends EventEmitter<EditorEvents, EditorPorts>  {
 
     private options: EditorOptions = {
         dom: document.createElement('div'),

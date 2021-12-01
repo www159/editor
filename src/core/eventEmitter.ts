@@ -5,6 +5,8 @@
 
 declare module '@editor/core' {
     interface EditorEvents {}
+
+    interface EditorPorts {}
 }
 
 type EventWrap = { [key: string]: any }
@@ -15,8 +17,17 @@ type EventFns<T extends EventWrap> = {
     [key in keyof T]: ((...args: T[key]) => void)[]
 }
 
-export class EventEmitter<T extends EventWrap> {
-    private handlers: EventFns<T> = {} as EventFns<T>
+type PortWrap = { [key: string]: any }
+
+type Emitters<P extends PortWrap> = { 
+    [key in keyof P]: EventEmitter<P[key]>
+}
+
+export class EventEmitter<T extends EventWrap, P extends PortWrap = any> {
+
+    private handlers: EventFns<T> = <EventFns<T>>{}
+
+    private ports: Emitters<P> = <Emitters<P>>{}
 
     public on<EK extends keyof T>(event: EK, fn: TupFunc<T[EK]>): () => void  {
         if(!this.handlers[event]) {
@@ -32,27 +43,6 @@ export class EventEmitter<T extends EventWrap> {
         }
     }
 
-    // public onChannel(channel: string, event: string, fn: Function) {
-    //     return this.on(bindChannel(channel, event), fn)
-    // }
-
-    // public emitAsync(event: string, ...args: any): this {
-    //     const handlers = this.handlers[event]
-        
-    //     let awaitFunc = new Array<Promise<void>>()
-    //     if(handlers) {
-    //         handlers.forEach(handler => {
-    //             awaitFunc.push(new Promise<void>((res) => {
-    //                 handler.apply(this, args)
-    //                 res()
-    //             }))
-    //         })
-    //     }
-    //     Promise.all(awaitFunc)
-
-    //     return this
-    // }
-
     public emit<EK extends keyof T>(event: EK, ...args: T[EK]): this {
         const handlers = this.handlers[event]
 
@@ -63,6 +53,20 @@ export class EventEmitter<T extends EventWrap> {
         }
 
         return this
+    }
+
+    public emitPort<PK extends keyof P, EK extends keyof P[PK]>(port: PK, event: EK, ...args: P[PK][EK]): this {
+        const portEmitter = this.ports[port]
+        if(portEmitter) {
+            portEmitter.emit(event, ...args)
+        }
+        return this
+        
+    }
+    public onPort<PK extends keyof P, EK extends keyof P[PK]>(port: PK, event: EK, fn:  TupFunc<P[PK][EK]>): () => void {
+        if(!this.ports[port]) this.ports[port] = new EventEmitter<P[PK]>()
+        const off = this.ports[port].on(event, fn)
+        return off
     }
 
     // public emitChannel(channel: string, event: string, ...args: any) {
@@ -85,8 +89,7 @@ export class EventEmitter<T extends EventWrap> {
     }
 
     protected destoryAllListeners() {
-        this.handlers = {} as EventFns<T>
+        this.handlers = <EventFns<T>>{}
+        this.ports = <Emitters<P>>{}
     }
 }
-
-const bindChannel = (channel: string, event: string) => `${channel}##${event}` 

@@ -1,4 +1,4 @@
-import { Command } from "prosemirror-commands";
+import { chainCommands, Command } from "prosemirror-commands";
 import { Fragment, pmNode, Schema } from "prosemirror-model";
 import { EditorState, IMeta, Plugin, PluginKey, Transaction } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";

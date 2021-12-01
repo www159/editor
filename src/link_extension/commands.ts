@@ -22,7 +22,7 @@ export function wrapInLink(linkType: NodeType, schema: WSchema, emitter: EventEm
                        *----*
                          **
         */
-        if(overlapLink(state, linkType, schema, dispatch)) return false
+        if(overlapLink(state, linkType, schema, emitter, dispatch)) return false
         /*
         +++++LAST STEP: 选区没有和其他link重叠+++++
         
@@ -75,12 +75,14 @@ export function wrapInLink(linkType: NodeType, schema: WSchema, emitter: EventEm
 // function wrappingLink(start, end)
 
 //如果出现重叠，重新分配选区。
-function overlapLink(state: EditorState, linkType: NodeType, schema: WSchema, dispatch?: DispatchFunc) {
+function overlapLink(state: EditorState, linkType: NodeType, schema: WSchema, emitter: EventEmitter<EditorEvents>, dispatch?: DispatchFunc) {
     let { $from, $to } = state.selection
     const fromLap = $from.parent.type === linkType
     const toLap = $to.parent.type === linkType
-    if(fromLap || toLap) 
+    if(fromLap || toLap) {
+        emitter.emit('layer ## layer', "link不能边缘重叠", 2000)
         return false
+    }
     /*
     +++++LAST STEP: 首位没有重叠+++++
     

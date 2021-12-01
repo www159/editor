@@ -18,13 +18,19 @@
 - [x] 表情插入
 - [x] 多级list
 - [x] 基本markdown输入规则
+- [x] 测试覆盖 badges （能显示就行）
+- [x] cypress
 
 **正在。。。**
 - [ ] 链接节点
-- [ ] 一堆bug
-- [x] e2e测试
-- [x] coverage标签
+- [x] 一堆bug
 - [ ] monorepo
-
+- [ ] 单元测试
+- [ ] 解耦commond, 方便被调用(有必要吗？？？)
+- [ ] react 单例缓冲层
+    - [ ] link 单例
+    - [ ] emoji 单例改造
+- [ ] toggleNode 不灵活
+- [ ] undo redo
 道阻且长。
 

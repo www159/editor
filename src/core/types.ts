@@ -7,10 +7,6 @@ import { Editor, EditorEvents, WSchema, EventEmitter } from ".";
 
 /*********************************** model-fixed ***********************************/
 
-export type Realize<T> = 
-T extends null | undefined ?
-never :
-T   
 
 declare module 'prosemirror-model' {
     interface Fragment {
@@ -35,6 +31,11 @@ declare module 'prosemirror-model' {
 }
 
 declare module '@editor/core' {
+
+export type Realize<T> = 
+T extends null | undefined ?
+never :
+T   
 /*********************************** extension func ***********************************/
 
 export type DispatchFunc = ((tr: Transaction) => void) | undefined
@@ -83,7 +84,7 @@ export interface Extension<Storage = any> {
     }) => void
 
     reducer?: (this: {
-        emitter: EventEmitter<EditorEvents>
+        emitter: EditorEmitter
         storage: Storage
     }) => void
 
@@ -129,4 +130,6 @@ export type ConsNode<T extends string = any> = {
 export type ConsMark<T extends string = any> = {
     [key in T]: MarkSpec
 }
+/*********************************** editor events ***********************************/
+export type EditorEmitter = EventEmitter<EditorEvents, EditorPorts>
 }
