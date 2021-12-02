@@ -1,5 +1,5 @@
 import { Plugin, PluginKey } from "prosemirror-state";
-import { Extension } from "../types";
+import { Extension } from "@editor/core";
 import { DOMOutputSpec, Node as pmNode, NodeSpec, Schema } from "prosemirror-model";
 import { node } from "webpack";
 

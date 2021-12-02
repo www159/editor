@@ -106,9 +106,9 @@ export class Editor extends EventEmitter<EditorEvents, EditorPorts>  {
 
         this.view.updateState(newState)
         this.emit('create', { editor: this })
-        setTimeout(() => {
-            this.emitPort('layer', 'layer', 'create long long warning', 1000, 'SMILE')
-        }, 20)
+        // setTimeout(() => {
+        //     this.emitPort('layer', 'layer', 'create long long warning', 1000, 'SMILE')
+        // }, 20)
     }
 
     private dispatchInner(tr: Transaction) {

@@ -1,13 +1,12 @@
 import { EditorEmitter } from "@editor/core";
 import React, { useEffect, useRef, useState } from "react";
 // import ReactDOM from "react-dom";
-import { a, useSpring } from '@react-spring/web'
+import { a, useSpring, config } from '@react-spring/web'
 import { IconType } from ".";
 
 import './index.less'
 import { SmileSvg, TipSvg, WarnSvg, WrongSvg } from "./svgIcon";
 import { setTimeoutAsync } from "@editor/utils";
-import { remove } from "cypress/types/lodash";
 
 interface AppProps {
   emitter: EditorEmitter
@@ -31,14 +30,14 @@ const App: React.FC<AppProps> = ({ emitter }) => {
   const iconR = useRef<IconType>('TIP')
   const contentR = useRef<string>('')
   const buttonR = useRef<[btn1: () => void, btn2?: () => void] | undefined>()
+
+  const queR = useRef<(() => void)[]>([])
  
   useEffect(() => {
     const offs = [
-      emitter.onPort('layer', 'layer', (content, delay, icon) => {
-        setLayerDisp(false)
-        console.log('on layer')
+      emitter.onPort('layer', 'layer', (content, delay = 0, icon) => {
         contentR.current = content
-        delayR.current = delay + 1000
+        delayR.current = delay
         iconR.current = icon || 'TIP'
         setLayerDisp(true)
       }),
@@ -83,11 +82,16 @@ interface LayerProps {
  */
 const Layer: React.FC<LayerProps> = ({ content, delay, icon, remove }) => {
   
-  const { ...style } = useSpring({
+  const style = useSpring({
+    config: {
+      ...config.gentle,
+      duration: 100,
+    },
     from: {
       y: 200,
       opacity: 0,
     },
+
     to: async (next) => {
       await next({ y: 0,opacity: 1})
       await setTimeoutAsync(async () => {

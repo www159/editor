@@ -5,15 +5,12 @@
     font-size: 0.95em;
     font-family: 'Consolas', 'Ubunti Mono', monospace;
     cursor: auto;
-
-    @errorColor: red;
-
     
     &.empty-math {
         .math-render {
             &:before {
                 content: '(empty)';
-                color: @errorColor;
+                color: @error-font-color;
             }
         }
     }
@@ -22,7 +19,7 @@
         &.parse-error {
             &:before {
                 content: '(math-error)';
-                color: @errorColor;
+                color: @error-font-color;
                 cursor: help;
             }
         }
@@ -45,7 +42,7 @@
     }
 }
 
-@delimiterColor: #b0b0b0;
+
 
 math-inline {
     display: inline;
@@ -72,12 +69,12 @@ math-inline {
 
         &::after {
             content: '$';
-            color: @delimiterColor;
+            color: @delimiter-color;
         }
 
         &::before {
             content: '$';
-            color: @delimiterColor;
+            color: @delimiter-color;
         }
     }
 }
@@ -102,12 +99,12 @@ math-display {
         &::after {
             content: '$$';
             text-align: left;
-            color: @delimiterColor;
+            color: @delimiter-color;
         }
         &::before {
             content: '$$';
             text-align: left;
-            color: @delimiterColor;
+            color: @delimiter-color;
         }
     }
 

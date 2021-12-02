@@ -12,7 +12,7 @@ declare module '@editor/core' {
 
     interface EditorPorts {
         'layer': {
-            'layer': [content: string, delay: number, icon?: IconType]
+            'layer': [content: string, delay?: number, icon?: IconType]
             'confirm': [content: string, button?: [btn1: () => void, btn2?: () => void], icon?: IconType]
     
         }
@@ -49,10 +49,10 @@ export const layerExtension: Extension<LayerStorage> = {
     reducer() {
         const { emitter, storage: { layer } } = this
         emitter.onPort('layer', 'layer', (content, deplay, icon) => {
-            console.log(content, deplay, icon)
+            // console.log(content, deplay, icon)
         })
         emitter.onPort('layer', 'confirm', (content, button, icon) => {
-            console.log(content, button, icon)
+            // console.log(content, button, icon)
         })
     }
 }

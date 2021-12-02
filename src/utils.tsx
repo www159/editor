@@ -175,6 +175,22 @@ export function parentPos($pos: ResolvedPos, depth: number = -1) {
     return $pos.node(depth - 1).resolve($pos.posAtIndex($pos.index(depth), depth))
 }
 
+export interface InlineBound {
+    left: number
+    bottom: number
+    right: number
+}
+
+export function inlineBound<T extends Schema>(view: EditorView<T>, pos: number): InlineBound {
+    const { left, bottom } = view.coordsAtPos(pos)
+    const { right } = view.dom.getBoundingClientRect()
+    return {
+        left,
+        bottom,
+        right,  
+    }
+}
+
 /*********************************** editor assistant  ***********************************/
 export function nodesFromEditor(editor: Editor) {
     const { schema: { nodes } } = editor
@@ -194,4 +210,8 @@ export async function setTimeoutAsync(fn: () => Promise<void>, delay: number) {
             res()
         }, delay)
     })
+}
+
+export function multiOff(offs: (() => void)[]) {
+    offs.forEach(off => off())
 }

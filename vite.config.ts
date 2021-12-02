@@ -23,6 +23,7 @@ export default defineConfig({
     css: {
         preprocessorOptions: {
             less: {
+                additionalData: `@import '${resolve(__dirname, 'src/index.share.less')}';`,
                 javascriptEnabled: true
             }
         }
@@ -30,7 +31,7 @@ export default defineConfig({
 
     server: {
         host: '0.0.0.0',
-        port: '3000',
+        port: 3000,
         https: false,
     }
 })

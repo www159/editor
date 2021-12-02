@@ -1,4 +1,5 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require("path");
 const { resolve } = require('path')
 const env = process.env.NODE_ENV
 
@@ -46,8 +47,12 @@ module.exports = [
                 loader: (isDev ? 'style-loader' : MiniCssExtractPlugin.loader)
             },
             'css-loader',
+            'less-loader',
             {
-                loader: 'less-loader',
+                loader: 'style-resources-loader',
+                options: {
+                    patterns: path.resolve(__dirname, '..', 'src',  'index.share.less')
+                }
             }
         ],
     },

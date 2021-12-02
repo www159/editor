@@ -50,7 +50,7 @@ export const emojiPlugin = new Plugin<EmojiState, WSchema, EmojiMeta>({
 
       if(meta) {
         const { action, payload } = meta
-        //收到案件，dispatch设为此plugin
+        //收到按键，dispatch设为此plugin
         if(action === 'escape') {
           const { node, key } = payload
           const emojiView = activeEmojiViews.get(node)

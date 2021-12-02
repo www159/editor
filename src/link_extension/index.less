@@ -1,12 +1,26 @@
 .link-tip-wrapper {
     position: absolute;
     z-index: 2;
-    
+    width: 140px;
     .link-input-wrapper {
-        // background-color: #000;
-        input {
-            // border: none;
-            border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+            
+        &>:nth-child(2) {
+            margin-top: 3px;
+        }
+        .link-input {
+            color: @bar-font-color;
+            font-size: 1px !important;
+            background-color: @bar-color;
+            &::placeholder {
+                .placeholder();
+            }
+            &:focus {
+                outline: none;
+            }
+            border: none;
+            border-radius: 10px;
         }
     }
 }

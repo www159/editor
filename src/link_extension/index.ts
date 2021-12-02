@@ -2,7 +2,7 @@ import { ConsNode, Extensions } from "@editor/core";
 import { nodesFromEditor } from "@editor/utils";
 import { InputRule, textblockTypeInputRule, wrappingInputRule } from "prosemirror-inputrules";
 import { NodeType } from "prosemirror-model";
-import { wrapInLink } from "./commands";
+import { wakeUpPrompt, wrapInLink } from "./commands";
 import { createLinkPlugin } from "./linkState";
 
 declare module '@editor/core' {
@@ -32,31 +32,23 @@ export const linkExtensions: Extensions = [
                         obj : title ?
                         obj : {}
 
-                    }
+                    },
                 }],
-                toDOM: node => ['a', { href: node.attrs.href, title: node.attrs.title }, 0]
+                toDOM: node => ['a', { class: 'ProseMirror-link', href: node.attrs.href, title: node.attrs.title }, 0]
             },
         },
 
         shortcutKey() {
             const { link } = nodesFromEditor(this.editor)
-            const { schema } = this.editor
+            const { schema, view } = this.editor
             return {
-                "Ctrl-Alt-l": wrapInLink(link, schema, this.editor)
+                'Ctrl-Alt-l': wrapInLink(link, schema, this.editor),
+                'Ctrl-Enter': wakeUpPrompt(view, schema, this.editor)
             }
-        }
+        },
 
-        // inputRules() {
-        //     return [
-        //         textblockTypeInputRule(/::a\s$/, this.type as NodeType)
-        //     ]
-        // }
-    },
-
-    {
-        type: 'PLUGIN',
         wrappedPlugin() {
             return [createLinkPlugin(this.editor, this.editor.view.dom.parentElement as HTMLElement)]
         }
-    }
+    },
 ]
