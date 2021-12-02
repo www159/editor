@@ -36,7 +36,6 @@ export function createLinkPlugin(emitter: EditorEmitter, topDOM: HTMLElement) {
 
         state: {
             init(_, __) {
-                console.log(topDOM)
                 const prompt = topDOM.appendChild(document.createElement('div'))
                 prompt.className = 'link-tip-wrapper'
                 setStyle(prompt, css`display: none`)

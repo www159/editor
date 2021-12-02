@@ -75,7 +75,7 @@ export class Editor extends EventEmitter<EditorEvents, EditorPorts>  {
         
     }
 
-    private createView() {
+    private createView = () => {
         //plugin
         const resolver = new ExtensionResolver(this.options.extensions, this)
         let { schema } = resolver
@@ -106,6 +106,9 @@ export class Editor extends EventEmitter<EditorEvents, EditorPorts>  {
 
         this.view.updateState(newState)
         this.emit('create', { editor: this })
+        setTimeout(() => {
+            this.emitPort('layer', 'layer', 'create long long warning', 1000, 'SMILE')
+        }, 20)
     }
 
     private dispatchInner(tr: Transaction) {

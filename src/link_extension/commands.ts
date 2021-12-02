@@ -1,8 +1,8 @@
-import { DispatchFunc, EditorEvents, WSchema, EventEmitter } from "@editor/core";
-import { createWrapper, makeTextFragment, multiSteps, Procedure } from "@editor/utils";
+import { DispatchFunc, EditorEvents, WSchema, EventEmitter, EditorEmitter } from "@editor/core";
+import { createWrapper, makeTextFragment, multiSteps, parentPos, Procedure } from "@editor/utils";
 import { Command } from "prosemirror-commands";
 import { NodeRange, NodeType, Fragment, Slice } from "prosemirror-model";
-import { EditorState, Selection, SelectionRange } from "prosemirror-state";
+import { EditorState, NodeSelection, Selection, SelectionRange } from "prosemirror-state";
 import { findWrapping, ReplaceStep, ReplaceAroundStep, Step } from 'prosemirror-transform'
 
 export function wrapInLink(linkType: NodeType, schema: WSchema, emitter: EventEmitter<EditorEvents>): Command {
@@ -75,12 +75,15 @@ export function wrapInLink(linkType: NodeType, schema: WSchema, emitter: EventEm
 // function wrappingLink(start, end)
 
 //如果出现重叠，重新分配选区。
-function overlapLink(state: EditorState, linkType: NodeType, schema: WSchema, emitter: EventEmitter<EditorEvents>, dispatch?: DispatchFunc) {
+function overlapLink(state: EditorState, linkType: NodeType, schema: WSchema, emitter: EditorEmitter, dispatch?: DispatchFunc) {
     let { $from, $to } = state.selection
     const fromLap = $from.parent.type === linkType
     const toLap = $to.parent.type === linkType
+    const { parent } = $to
+    console.log(fromLap, toLap)
     if(fromLap || toLap) {
-        emitter.emit('layer ## layer', "link不能边缘重叠", 2000)
+        if(dispatch) dispatch(state.tr.setSelection(new NodeSelection(parentPos($to))))
+        emitter.emitPort('layer', 'layer', "link边缘不能重叠", 100, 'WARNING')
         return false
     }
     /*

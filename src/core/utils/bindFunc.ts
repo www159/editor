@@ -33,11 +33,11 @@ export function bindFunc(extension: Extension, context: {
     }
 
     if(extension.onCreate) {
-        extension.onCreate.bind({
-            editor,
-            storage,
-        })
-        editor.on('create', extension.onCreate)
+        // extension.onCreate.bind({
+        //     editor,
+        //     storage,
+        // })
+        editor.on('create', () => extension.onCreate?.apply({editor, storage}))
     }
 
     if(extension.onUpdate) {

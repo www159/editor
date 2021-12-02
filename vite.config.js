@@ -9,6 +9,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@editor': resolve(__dirname, 'src'),
+            '@public': resolve(__dirname, 'public')
         },
         // extensions: [
         //     '.less'

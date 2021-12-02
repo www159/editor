@@ -16,6 +16,8 @@
         "paths": {
             "@editor": ["./src"],
             "@editor/*": ["./src/*"],
+            "@public/*": ["./public/*"],
+            "@public/": ["./public/"]
         }
     }
 }

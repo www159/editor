@@ -1,5 +1,5 @@
 import { chainCommands, Command } from "prosemirror-commands";
-import { Fragment, pmNode, Schema } from "prosemirror-model";
+import { Fragment, pmNode, ResolvedPos, Schema } from "prosemirror-model";
 import { EditorState, IMeta, Plugin, PluginKey, Transaction } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { findWrapping, Step, StepMap } from "prosemirror-transform"
@@ -105,7 +105,6 @@ export function setStyle(elm: HTMLElement, style: string) {
     elm.style.cssText = style
 }
 
-
 /*********************************** event emit among prosemirror plugins  ***********************************/
 
 export function deConsView(view: EditorView) {
@@ -172,6 +171,10 @@ export function multiSteps<S extends WSchema>(tr: Transaction<S>, steps: Step[])
     // })
 }
 
+export function parentPos($pos: ResolvedPos, depth: number = -1) {
+    return $pos.node(depth - 1).resolve($pos.posAtIndex($pos.index(depth), depth))
+}
+
 /*********************************** editor assistant  ***********************************/
 export function nodesFromEditor(editor: Editor) {
     const { schema: { nodes } } = editor
@@ -181,4 +184,14 @@ export function nodesFromEditor(editor: Editor) {
 export function marksFromEditor(editor: Editor) {
     const { schema: { marks } } = editor
     return marks
+}
+
+/*********************************** common  ***********************************/
+export async function setTimeoutAsync(fn: () => Promise<void>, delay: number) {
+    return new Promise<void>(res => {
+        setTimeout(async () => {
+            await fn()
+            res()
+        }, delay)
+    })
 }
