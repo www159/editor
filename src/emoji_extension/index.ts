@@ -33,7 +33,13 @@ export const emojiExtensions: Extensions = [
                 attrs: {
                     index: { default: -1 },
                 },
-                parseDOM: [{ tag: 'emoji' }],
+                parseDOM: [{ tag: 'emoji', getAttrs: (node) => {
+                    const index = (node as HTMLElement).getAttribute('data-index')
+                    if(!index) return null
+                    return {
+                        index: Number.parseInt(index)
+                    }
+                } }],
                 toDOM: (node: pmNode) => ["emoji", { class: 'ProseMirror-emoji' }, 0]
 
             }

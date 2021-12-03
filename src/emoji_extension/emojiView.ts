@@ -47,7 +47,7 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
         this.outerView = view
         this.emojiBar = null
 
-        this.nowIndex = -1
+        this.nowIndex = node.attrs.index
 
         const { index } = this.node.attrs as { index: number }
         if(index !== -1) {
