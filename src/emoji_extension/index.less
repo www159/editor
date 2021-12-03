@@ -17,10 +17,9 @@ emoji {
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        border-radius: 5px;
-        border: 1px #c8c8c8 solid;
+        border: 0.5px @border-color solid;
         font-family: none;
-        overflow: hidden;
+        overflow: visible;
         border-radius: 5px;
 
         position: absolute;
@@ -78,6 +77,7 @@ emoji {
             display: flex;
             justify-content: center;
             align-items: center;
+            border-radius:0 0 5px 5px;
         
         
             .radio-grid {
@@ -85,7 +85,6 @@ emoji {
               display: grid;
               /* grid-template-columns: repeat(3, 1fr); */
               grid-gap: 8px;
-        
               .radio {
                 cursor: pointer;
                 box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5);

@@ -5,6 +5,7 @@ import { NodeType, pmNode, Schema } from "prosemirror-model";
 import { IMeta, Plugin, PluginKey, Transaction } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import HrefPrompt from "./HrefPrompt";
+import { renderGrouped } from "prosemirror-menu";
 
 export interface linkState {
     activePos: number | null
@@ -121,6 +122,15 @@ export function createLinkPlugin(editor: Editor, topDOM: HTMLElement) {
                 }
                 return false
             },
+
+            handleClickOn({ state }, __, node) {
+                const { activePos } = LINK_PLUGIN_KEY.getState(state) as linkState
+                if(activePos !== null) {
+                    editor.emitPort('link', 'leave input by click')
+                    return true
+                }
+                return false
+            }
         }
     })
 }

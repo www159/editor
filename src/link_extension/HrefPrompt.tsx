@@ -15,6 +15,7 @@ declare module '@editor/core' {
   interface EditorPorts {
     'link': {
       'popup input': [href: string, title: string]
+      'leave input by click': []
     }
   }
 
@@ -91,11 +92,16 @@ const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter, view }) => {
 
   useEffect(() => {
     const offs = [
+      
       emitter.onPort('link', 'popup input', (href, title) => {
         setHref(href)
         setTitle(title)
         setDisp(true)
         setActiveInd(0)
+      }),
+
+      emitter.onPort('link', 'leave input by click', () => {
+        handleEnter()
       })
     ]
     return () => multiOff(offs)

@@ -189,7 +189,11 @@ export function wakeUpPrompt(view: EditorView<WSchema>, schema: WSchema, emitter
             const { href, title } = linkParent.attrs
             const { prompt } = LINK_PLUGIN_KEY.getState(state) as linkState
             const { left, right, bottom } = inlineBound(view, start - 1)
+            setStyle(prompt, css`
+              display : '';
+              `)
             const { width } = prompt.getBoundingClientRect()
+            console.log(right - left, prompt)
             setStyle(prompt, css`
               display: '';
               left: ${right - left < width ? right - width : left}px;

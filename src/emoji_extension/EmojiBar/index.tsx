@@ -16,6 +16,7 @@ const EMOJI_PER_SHEET = 16
 
 export interface AppProps {
   emitter: EventEmitter<EmojiEvents>
+  nowIndex: number
 }
 
 function calcIndex(sheet: number, row: number, col: number) {
@@ -30,26 +31,35 @@ function deConsIndex(index: number) {
   }
 }
 
-const App: React.FC<AppProps> = ({ emitter }) => {
+function setScale(selectedIndex: number, index: number) {
+  if(selectedIndex !== index) return 1
+  return 1.4
+}
+
+function setOpacity(selectedIndex: number, index: number) {
+  if(selectedIndex === -1) return 1
+  else if(selectedIndex !== index) return 0.4
+  return 1
+}
+
+const App: React.FC<AppProps> = ({ emitter, nowIndex }) => {
 
   const [selectedSheet, setSheet] = useState(0)
   const [selectedIndex, setIndex] = useState(-1)
 
-
-  //发送基本消息
-  // useEffect(() => {
-  //   emitter.emit('emoji bar create')
-  //   //区分sheet和radio
-  //   return () => {
-  //     emitter.emit('emoji bar distroy')
-  //   }
-  // }, [])
+  useEffect(function initSelectIndex() {
+    setIndex(nowIndex)
+    if(nowIndex === -1) return
+    const { sheet } = deConsIndex(nowIndex)
+    setSheet(sheet)
+  }, [])
 
   const sheetCnt = useRef<number>(0)
   const radios: ReactElement[] = []
   const sheets: ReactElement[] = [] 
 
   sheetCnt.current = Math.ceil(emojiArr.length / EMOJI_PER_SHEET)
+
    // const [springs, api] = useSprings(global.sheetCnt,)
   for(let i = 0; i < sheetCnt.current; i++) {
     radios.push(
@@ -63,17 +73,29 @@ const App: React.FC<AppProps> = ({ emitter }) => {
     />)
   }
 
+  const emojiSprings = useSprings(emojiArr.length, 
+    emojiArr.map((_, index) => ({ 
+      config: {
+        duration: 200,
+      },
+      scale: setScale(selectedIndex, index),
+      opacity: setOpacity(selectedIndex, index),
+    })))
+
   for(let i = 0, j; i < emojiArr.length; i += EMOJI_PER_SHEET) {
     let emojis: JSX.Element[] = []
     for(let j = 0; j < EMOJI_PER_SHEET && j < emojiArr.length - i; j++) {
       emojis.push(
-        <div
+        <a.div
           key={`emoji${j}`}
-          className={i + j === selectedIndex ? 'emoji-select' : 'emoji'}
+          className='emoji'
+          style={emojiSprings[i + j]}
           onMouseUp={() => {
             emitter.emit('select index', i + j)
           }}
-          onMouseOver={() => setIndex(-1)}
+          onMouseEnter={() => setIndex(i + j)}
+
+          // onMouseLeave={() => setIndex(-1)}
             
           dangerouslySetInnerHTML={{__html: emojiArr[i+j]}}
         />
@@ -143,8 +165,8 @@ const App: React.FC<AppProps> = ({ emitter }) => {
     })
 
     return () => {
-      emitter.emit('react destroy')
       off()
+      emitter.emit('react destroy')
     }
   }, [selectedIndex])
 

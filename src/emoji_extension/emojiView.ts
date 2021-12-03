@@ -33,6 +33,8 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
 
     emojiBar: HTMLDivElement | null
 
+    nowIndex: number
+
     constructor(node: pmNode, view: EditorView, getPos: () => number) {
         super()
         
@@ -44,6 +46,8 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
         this.getPos = getPos
         this.outerView = view
         this.emojiBar = null
+
+        this.nowIndex = -1
 
         const { index } = this.node.attrs as { index: number }
         if(index !== -1) {
@@ -91,17 +95,19 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
 
         //如果没选且光标移动，删除自己
         // console.log(this.node.attrs.index)
-        if(this.node.attrs.index === -1) {
-            const { tr, dispatch } = deConsView(this.outerView)
-            const pos = this.getPos()
-            dispatch(tr.delete(pos, pos+2))
+        if(this.nowIndex === -1) {
+            setTimeout(() => {
+                const { tr, dispatch } = deConsView(this.outerView)
+                const pos = this.getPos()
+                dispatch(tr.delete(pos, pos+2))
+            }, 20)
             return
         }
     }
 
     open = () => {
         if(!this.emojiBar) {
-            reactDomAttach(EmojiBar, { emitter: this }, this.dom, true)
+            reactDomAttach(EmojiBar, { emitter: this, nowIndex: this.nowIndex }, this.dom, true)
             .then(node => {
                 this.emojiBar = node
                 this.emojiBar.className = "emoji-bar-wrapper"
@@ -125,7 +131,7 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
     //如果获得表情则将表情插入并显示
     //光标选中下一个单位
     exitView = (index: number) => {
-        this.node.attrs.index = index;
+        this.nowIndex = index;
         (this.dom as HTMLElement).innerHTML = emojiArr[index];
         (this.dom as HTMLElement).style.cssText = css`
             border: '';

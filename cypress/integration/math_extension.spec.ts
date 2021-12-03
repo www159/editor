@@ -35,4 +35,26 @@ describe('math extension', () => {
             .should('not.have.class', 'math-node')
         })
     })
+
+    context('block math', () => {
+        it('using inputrule', () => {
+            cy.get('.editor')
+            .type('{enter}')
+            .type('$$ ')
+            .get('math-dispaly')
+            .should('not.be.null')
+        })
+
+        it('type some tex', () => {
+            cy.get(',editor')
+            .type('\\frac{x + y}{c}')
+        })
+
+        it('delete block-math', () => {
+            cy.get('.editor')
+            .type('{rightarrow}{backspace}')
+            .get('div')
+            .should('not.have.class', 'math-node')
+        })
+    })
 })
