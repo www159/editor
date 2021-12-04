@@ -1,6 +1,6 @@
 import { DispatchFunc } from "@editor/core";
 import { Command } from "prosemirror-commands";
-import { Fragment, NodeType, pmNode, Slice } from "prosemirror-model";
+import { Fragment, NodeType, Slice, pmNode } from "prosemirror-model";
 import { EditorState } from "prosemirror-state";
 import { ReplaceAroundStep } from 'prosemirror-transform'
 import { getNextAttr } from "../utils/getNextAttr";

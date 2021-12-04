@@ -3,7 +3,7 @@ import { MenuItem } from "prosemirror-menu";
 import { NodeSpec, NodeType, MarkSpec, Node, MarkType, Mark, Schema, WrapAttrN, WrapAttrM } from "prosemirror-model";
 import { EditorState, NodeSelection, Plugin, Transaction } from "prosemirror-state";
 import { chainCommands, Command, Keymap } from "prosemirror-commands";
-import { Editor, EditorEvents, EventEmitter, pmNode } from ".";
+import { Editor, EditorEvents, EventEmitter } from ".";
 import { EditorView } from "prosemirror-view";
 
 /*********************************** model-fixed ***********************************/
@@ -18,13 +18,16 @@ declare module 'prosemirror-model' {
         // priority?: number
     }
 
-    // export interface pmNode<S extends Schema = any> extends Node<S> {
+    export interface pmNode<S extends Schema = any> extends Node<S> {
+    }
 
-    // }
+    export interface NodeType {
+        compatibleContent(type: NodeType): Fragment
+    }
 
-    // export interface pmMark<S extends Schema = any> extends Mark<S> {
+    export interface pmMark<S extends Schema = any> extends Mark<S> {
 
-    // }
+    }
 }  
 
 declare module '@editor/core' {
@@ -41,8 +44,6 @@ export interface WNode { [key: string]: unknown }
 export interface WMark { [key: string]: unknown }
 
 export interface WSchema extends Schema<WNode, WMark> {}
-
-export interface pmNode extends Node<WSchema> {}
 
 export interface pmMark extends Node<WSchema> {}
 

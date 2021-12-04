@@ -9,7 +9,7 @@ import { EventEmitter } from '../core'
 import { collaspeMathCmd } from './commands/collapseMathCmd';
 import { MathPluginState, MATH_PLUGIN_KEY } from './mathPlugin';
 import {  MATH_PREVIEW_KEY } from './plugins/mathPreview';
-import { deConsView, pmEmit } from '@editor/utils';
+import { deConsView, pmEmit, pmEmitAsync } from '@editor/utils';
 import { MathEvents } from '@editor/math_extension';
 // import { createMathPreviewPlugin, MATH_PREVIEW_KEY } from './plugins/mathPreview';
 
@@ -298,16 +298,15 @@ export class MathView extends EventEmitter<MathEvents> implements NodeView, Curs
                                 if(this.doc.textContent.length > 0) {
                                     return false
                                 }
-                               setTimeout(() => {
-                                    this.outerView.dispatch(this.outerView.state.tr.insertText(''))
-                                    this.outerView.focus()
-                               }, 20)
+                                this.outerView.dispatch(this.outerView.state.tr.insertText(''))
+                                this.outerView.focus()
                                 return true
                             }
                         ),
 
                         'Ctrl-Backspace': (state, dispatch) => {
                             setTimeout(() => {
+                                // this.outerView.dispatch(this.outerView.state.tr.delete(this.getPos(), this.getPos() + this.doc.nodeSize - 1))
                                 this.outerView.dispatch(this.outerView.state.tr.insertText(''))
                                 this.outerView.focus()
                             }, 20)
@@ -371,7 +370,7 @@ export class MathView extends EventEmitter<MathEvents> implements NodeView, Curs
         
         let { tr: outerTr, dispatch: outerDispatch } = deConsView(this.outerView)
 
-        pmEmit(this.outerView, MATH_PREVIEW_KEY, {
+        pmEmitAsync(this.outerView, MATH_PREVIEW_KEY, {
             action: 'REMOVE',
             payload: {
                 pos: this.getPos(),

@@ -1,6 +1,6 @@
-import { ConsNode, Extensions, pmNode } from "@editor/core";
+import { ConsNode, Extensions } from "@editor/core";
 import { InputRule } from "prosemirror-inputrules";
-import { NodeType, WrapAttrN } from "prosemirror-model";
+import { NodeType, WrapAttrN, pmNode } from "prosemirror-model";
 import { emojiPlugin } from "./emojiState";
 import { emojiInputRule } from "./inputrules";
 import "./index.less"

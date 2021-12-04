@@ -1,5 +1,6 @@
-import { EventEmitter, WSchema, pmNode } from "@editor/core";
+import { EventEmitter, WSchema } from "@editor/core";
 import { basicDeselection, basicSelection, deConsView, reactDomAttach, reactDomUnattach } from "@editor/utils";
+import { pmNode } from "prosemirror-model";
 import { EditorState, Selection, TextSelection } from "prosemirror-state";
 import { EditorView, NodeView } from "prosemirror-view";
 import { css } from "@editor/core/utils/stringRenderer";

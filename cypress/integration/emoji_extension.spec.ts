@@ -16,10 +16,7 @@ describe('emoji extension', () => {
 
         it('arrow choose', () => {
             cy.get('.editor').type('{enter}')
-            cy.get('.emoji-select').not('be.none').contains(String.fromCodePoint(0x1f600))
-
             cy.get('.editor').type('{leftarrow}')
-            cy.get('.emoji-select').contains(String.fromCodePoint(0x1f635))
             cy.get('.emoji').should('have.length.at.least', 8)
         })
 

@@ -1,17 +1,16 @@
-import { DispatchFunc, EditorEvents, EventEmitter, EditorEmitter, pmNode, WCommand, WSchema } from "@editor/core";
+import { DispatchFunc, EditorEvents, EventEmitter, EditorEmitter } from "@editor/core";
 import { css } from "@editor/core/utils/stringRenderer";
 import { createWrapper, inlineBound, makeTextFragment, multiSteps, parentPos, Procedure, setStyle } from "@editor/utils";
 import { Command } from "prosemirror-commands";
-import { NodeRange, NodeType, Fragment, Slice, Schema } from "prosemirror-model";
+import { NodeRange, NodeType, Fragment, Slice, pmNode, Schema } from "prosemirror-model";
 import { AllSelection, EditorState, NodeSelection, Selection, SelectionRange, TextSelection } from "prosemirror-state";
 import { findWrapping, ReplaceStep, ReplaceAroundStep, Step } from 'prosemirror-transform'
 import { EditorView } from "prosemirror-view";
 import { linkState, LINK_PLUGIN_KEY } from "./linkState";
 
-export function wrapInLink(linkType: NodeType, schema: WSchema, emitter: EventEmitter<EditorEvents>): WCommand {
+export function wrapInLink(linkType: NodeType, schema: Schema, emitter: EventEmitter<EditorEvents>): Command {
     return (state, dispatch) => {
         const { $from, $to } = state.selection
-        if($from.parent.type.name === '')
         if($to.pos - $from.pos === 0) return false
         /*
         +++++LAST STEP: 选区非空+++++

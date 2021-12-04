@@ -1,6 +1,6 @@
 import { Editor } from "@editor";
 import { MarkSpec, NodeSpec, pmMark, pmNode, Schema } from "prosemirror-model";
-import { Extensions, WSchema } from "@editor/core";
+import { Extensions, WMark, WNode, WSchema } from "@editor/core";
 import { getType } from "./utils/getType";
 import { Plugin } from "prosemirror-state";
 import { bindFunc } from "./utils/bindFunc";
@@ -9,7 +9,7 @@ export class ExtensionResolver {
 
     editor: Editor
 
-    schema: WSchema
+    schema: Schema
 
     extensions: Extensions
 
@@ -64,8 +64,8 @@ export class ExtensionResolver {
         //分别处理每一个node和mark
         
         this.schema = new Schema({
-            nodes: Nodes,
-            marks: Marks
+            nodes: Nodes ,
+            marks: Marks  
         })
     }
 

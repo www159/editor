@@ -9,33 +9,23 @@ export const mathDeleteCmd: Command = (state: EditorState, dispatch: DispatchFun
     let index = $from.index();
 	let posBefore = $from.posAtIndex(index-1)
 
-	const canDispatch = new Procedure({ nodeBefore, posBefore, state })
-	//@experiental
-	.then(({ nodeBefore, posBefore, state }) => {
-		if(!nodeBefore) {
-			posBefore = $from.posAtIndex($from.index(-1) - 1, -1)
-			nodeBefore = state.doc.nodeAt(posBefore)
-		}
-		return {
-			nodeBefore,
-			$from,
-		}
-	})
-	.then(({ nodeBefore, $from }) => {
-		if(
-			!nodeBefore                               ||
-			(nodeBefore?.type.name !== 'math_display' && 
-        	nodeBefore?.type.name !== 'math_inline')  ||  
-			(nodeBefore.type.name === 'math_display'  && 
-        	$from.parentOffset !== 0) 
-		) {
-			return false
-		}
-	})
-	.final()
+	if(!nodeBefore) {
+		posBefore = $from.posAtIndex($from.index(-1) - 1, -1)
+		nodeBefore = state.doc.nodeAt(posBefore)
+	}
 
-	if(!canDispatch) return false
+	if(
+		!nodeBefore                               ||
+		(nodeBefore?.type.name !== 'math_display' && 
+		nodeBefore?.type.name !== 'math_inline')  ||  
+		(nodeBefore.type.name === 'math_display'  && 
+		$from.parentOffset !== 0) 
+	) {
+		return false
+	}
 
+
+	console.log(posBefore)
 	let $posBefore = state.doc.resolve(posBefore)
 	if(dispatch) {
 		dispatch(state.tr.setSelection(new NodeSelection($posBefore)));

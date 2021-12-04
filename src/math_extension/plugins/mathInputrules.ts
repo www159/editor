@@ -23,11 +23,12 @@ export function makeBlockMathInputrule(
         return new InputRule(
             pattern,
             (state, match, start, end) => {
-                // console.log(1)
                 // console.log('math')
                 let $start = state.doc.resolve(start)
                 let attrs = getAttrs instanceof Function ? getAttrs(match): getAttrs
                 // debugger
+                console.log($start.node(-1), $start.index(-1), $start.indexAfter(-1), nodeType)
+                console.log($start.node(-1).canReplaceWith($start.index(-1), $start.indexAfter(-1), nodeType))
                 if((!$start.node(-1).canReplaceWith($start.index(-1), $start.indexAfter(-1), nodeType))) return null
                 if(nodeType.name === 'math_display') {
                     if($start.parentOffset !== 0) {

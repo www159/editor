@@ -1,6 +1,7 @@
-import { WEditorView, WSchema, pmNode } from "@editor/core";
+import { WEditorView, WSchema } from "@editor/core";
 import { ESCAPE_KEY } from "@editor/emoji_extension";
 import { pmFetch } from "@editor/utils";
+import { pmNode } from "prosemirror-model";
 import { Plugin, PluginKey, TextSelection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { EmojiView } from "./emojiView";
@@ -52,7 +53,6 @@ export const emojiPlugin = new Plugin<EmojiState, WSchema, EmojiMeta>({
         //收到按键，dispatch设为此plugin
         if(action === 'escape') {
           const { node, key } = payload
-          console.log(node.attrs)
           const emojiView = activeEmojiViews.get(node)
           if(!emojiView) 
             throw new Error('找不到该节点对应的emojiView')

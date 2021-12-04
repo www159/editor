@@ -1,7 +1,7 @@
-import { ConsNode, Extension, pmNode } from "@editor/core"
+import { ConsNode, Extension } from "@editor/core"
 // import { InputRuleSpec } from "@editor/core/types"
 import { InputRule, textblockTypeInputRule } from "prosemirror-inputrules"
-import { NodeType } from "prosemirror-model"
+import { NodeType, pmNode } from "prosemirror-model"
 
 declare module '@editor/core' {
     interface WNode {

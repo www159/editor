@@ -1,5 +1,5 @@
-import { ConsNode, Extension, Extensions, pmNode } from '@editor/core';
-import { NodeSpec, NodeType, WrapAttrN } from 'prosemirror-model';
+import { ConsNode, Extension, Extensions } from '@editor/core';
+import { NodeSpec, NodeType, WrapAttrN, pmNode, } from 'prosemirror-model';
 import { makeInlineMathInputRule, REGEX_INLINE_MATH_DOLLARS_ESCAPED, makeBlockMathInputrule, REGEX_BLOCK_MATH_DOLLARS, REGEX_INLINE_MATH_DOLLARS_LITE } from './plugins/mathInputrules';
 import { mathPlugin } from './mathPlugin';
 // import { mathNodes } from './mathSchema';
@@ -7,11 +7,12 @@ import { mathPlugin } from './mathPlugin';
 import { mathSelectPlugin } from './plugins/mathSelect';
 import { mathPreviewPlugin } from './plugins/mathPreview';
 import { nodesFromEditor } from '@editor/utils';
+import { mathDeleteCmd } from './commands/mathDeleteCmd'
 
 declare module '@editor/core' {
     interface math_nodes {
-        'math_line': {}
-        'math_block': {}
+        'math_inline': {}
+        'math_display': {}
     }
     interface WNode extends math_nodes {}
 }
@@ -33,14 +34,15 @@ export const mathExtensions: Extensions = [
             },
         },
         inputRules() {
+            const { math_inline } = nodesFromEditor(this.editor)
             return [
                 makeInlineMathInputRule(
                     REGEX_INLINE_MATH_DOLLARS_ESCAPED,
-                    this.type as NodeType
+                    math_inline
                 ),
                 makeInlineMathInputRule(
                     REGEX_INLINE_MATH_DOLLARS_LITE,
-                    this.type as NodeType
+                    math_inline
                 )
             ]
         }
@@ -64,10 +66,10 @@ export const mathExtensions: Extensions = [
         },
 
         inputRules() {
-            const { link } = nodesFromEditor(this.editor)
+            const { math_display } = nodesFromEditor(this.editor)
             return [makeBlockMathInputrule(
                 REGEX_BLOCK_MATH_DOLLARS,
-                link,
+                math_display,
             )]
         }
     },
@@ -78,6 +80,11 @@ export const mathExtensions: Extensions = [
             mathPreviewPlugin,
             mathSelectPlugin,
             mathPlugin,
-        ]
+        ],
+        shortcutKey() {
+            return {
+                'Backspace': mathDeleteCmd
+            }
+        }
     }
 ]

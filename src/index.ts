@@ -8,6 +8,7 @@ import { baseMarkExtensions } from './base_mark_extension'
 import { linkExtensions } from './link_extension'
 
 import { layerExtension } from './layer_extension'
+import { Procedure } from './utils'
 export {
     Editor
 } from './core'
