@@ -70,9 +70,9 @@ export function createLinkPlugin(editor: Editor, topDOM: HTMLElement) {
                         }
                         case 'exit link input': {
                             const { prompt } = value
-                            setStyle(prompt, css`
-                                display: none;
-                            `)
+                            // setStyle(prompt, css`
+                            //     display: none;
+                            // `)
                             setTimeout(() => {
                                 editor.view.focus()
                             }, 20)

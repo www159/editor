@@ -9,7 +9,8 @@ import { NodeSelection } from "prosemirror-state";
 const editor = new Editor({
     content: 
     html`
-    <p>emojiaaaaaaaaaaaaaaaaaaa<a href="https://www.baidu.com" title="度爹">aaaaa</a>aaaaaaaa<a>bbbbbbbbbbbbbbb</a>ccccccccccccccc<emoji data-index="2"/><emoji></p>
+    <h2>测试</h2>
+    <p>先来测试一个link<a href="https://www.baidu.com" title="度爹">指向度爹</a>。接着测试layer<a>没有东东呢</a>听说没有<strong><em>line break</em></strong>是长单词的原因<emoji data-index="2"/><emoji></p>
     `,
     dom: document.querySelector('.editor') as HTMLElement,
     extensions,

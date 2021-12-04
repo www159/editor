@@ -11,12 +11,10 @@ export const emojiInputRule = (type: NodeType) => (new InputRule(
         let $start = state.doc.resolve(start),
             $end = state.doc.resolve(end),
             { tr } = state
-        console.log('create')
-        console.log($start.parent.toJSON())
         if(!$start.parent.canReplaceWith($start.index(), $end.index(), type))
             return null
 
-        tr.replaceRangeWith(start, end, type.create())
+        tr.replaceRangeWith(start, end, type.create({ attrs: { index: 0 } }))
         return tr.setSelection(NodeSelection.create(tr.doc, start))
     }
 ))

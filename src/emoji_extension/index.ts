@@ -5,7 +5,7 @@ import { emojiPlugin } from "./emojiState";
 import { emojiInputRule } from "./inputrules";
 import "./index.less"
 import { escapeBar } from "./commands/escapeBar";
-import { nodesFromEditor } from "@editor/utils";
+import { makeTextFragment, nodesFromEditor } from "@editor/utils";
 
 export type ESCAPE_KEY = 
                     | 'up' 
@@ -37,7 +37,9 @@ export const emojiExtensions: Extensions = [
                 inline: true,
                 // draggable: true,
                 attrs: {
-                    index: { default: -1 },
+                    index: {
+                        default: 0,
+                    },
                 },
                 parseDOM: [{ tag: 'emoji', getAttrs: (node) => {
                     const index = (node as HTMLElement).getAttribute('data-index')
@@ -45,9 +47,10 @@ export const emojiExtensions: Extensions = [
                     return {
                         index: Number.parseInt(index)
                     }
-                } }],
-                toDOM: (node: pmNode) => ["emoji", { class: 'ProseMirror-emoji', 'data-index': node.attrs.index }, 0]
-
+                }, /* getContent: (p, schema) => {
+                    return makeTextFragment('123', schema)
+                } */}],
+                toDOM: (node: pmNode) => ["emoji", {'data-index': node.attrs.index }, 0]
             }
         },
         inputRules() {

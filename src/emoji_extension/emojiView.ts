@@ -2,7 +2,7 @@ import { EventEmitter, WSchema } from "@editor/core";
 import { basicDeselection, basicSelection, deConsView, reactDomAttach, reactDomUnattach } from "@editor/utils";
 import { pmNode } from "prosemirror-model";
 import { EditorState, Selection, TextSelection } from "prosemirror-state";
-import { EditorView, NodeView } from "prosemirror-view";
+import { Decoration, DecorationSet, EditorView, NodeView } from "prosemirror-view";
 import { css } from "@editor/core/utils/stringRenderer";
 
 import { EMOJI_STATE_KEY } from "./emojiState";
@@ -36,8 +36,12 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
     nowIndex: number
 
     constructor(node: pmNode, view: EditorView, getPos: () => number) {
+
         super()
-        
+        console.log('create')
+        console.log(view.state.doc.toJSON())
+
+        console.log(node)
         this.node = node
         const { index } = this.node.attrs as { index: number }
 
@@ -54,6 +58,7 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
 
         this.emojiBar = null
 
+        console.log(node.attrs.index)
         this.nowIndex = node.attrs.index
         if(index !== -1) {
             this.exitView(index)
@@ -81,7 +86,7 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
                 this.node.attrs.index = this.nowIndex;
                 (this.dom as HTMLElement).setAttribute('data-index', String(this.nowIndex))
                 dispatch(tr.setSelection(TextSelection.create(tr.doc, nextPos)).scrollIntoView());
-                console.log(this.outerView.state.doc.nodeAt(pos))
+                // console.log(this.outerView.state.doc.nodeAt(pos))
             }, 0)
         })
         // this.on('emoji bar distroy', this.exitView)
@@ -135,7 +140,6 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
             this.emojiBar = null
         }
     }
-
 
     //如果获得表情则将表情插入并显示
     //光标选中下一个单位

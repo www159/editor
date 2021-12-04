@@ -193,7 +193,6 @@ export function wakeUpPrompt(view: EditorView<Schema>, schema: Schema, emitter: 
               display : '';
               `)
             const { width } = prompt.getBoundingClientRect()
-            console.log(right - left, prompt)
             setStyle(prompt, css`
               display: '';
               left: ${right - left < width ? right - width : left}px;

@@ -1,4 +1,4 @@
-import { EditorEmitter, EditorEvents, EventEmitter } from '@editor/core'
+import { EditorEmitter, EditorEvents, EventEmitter, WEditorState, WEditorView } from '@editor/core'
 import { InlineBound, multiOff, pmEmit } from '@editor/utils'
 import { EditorView } from 'prosemirror-view'
 import React, { KeyboardEvent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
@@ -9,7 +9,7 @@ import { Schema } from 'prosemirror-model'
 
 interface HrefPromptProps {
   emitter: EditorEmitter
-  view: EditorView<Schema>
+  view: WEditorView
 }
 
 declare module '@editor/core' {
@@ -22,8 +22,7 @@ declare module '@editor/core' {
 
 }
 
-const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter, view }) => {
-  
+function useHrefPrompt(emitter: EditorEmitter, view: WEditorView) {
   const [href, setHref] = useState('')
   
   const [title, setTitle] = useState('')
@@ -65,6 +64,7 @@ const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter, view }) => {
   const handleEnter = useCallback(() => {
     setActiveInd(-1)
     // emitter.emitPort('link', 'leave input', href, title)
+    setDisp(false)
     pmEmit(view, LINK_PLUGIN_KEY, {
       action: 'leave input',
       payload: {
@@ -72,7 +72,7 @@ const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter, view }) => {
         title,
       }
     })
-  }, [title, href])
+  }, [title, href, disp])
 
   const inputPrevent = useCallback<KeyboardEventHandler<HTMLInputElement>>(e  => {
     const { key, metaKey } = e
@@ -106,7 +106,21 @@ const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter, view }) => {
       })
     ]
     return () => multiOff(offs)
-  }, [])
+  }, [disp, title, href])
+
+  return [
+    {disp, hrefInputR, hrefStyle, titleInputR, titleStyle, href, title},
+    {setHref, setTitle, handleArrow, handleEnter, inputPrevent}
+  ] as const
+
+} 
+
+const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter, view }) => {
+  
+  const [
+    {disp, hrefInputR, hrefStyle, titleInputR, titleStyle, href, title},
+    {setHref, setTitle, handleArrow, handleEnter, inputPrevent}
+  ] = useHrefPrompt(emitter, view)
 
   return (
     <div 
