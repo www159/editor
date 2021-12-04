@@ -52,6 +52,7 @@ export const emojiPlugin = new Plugin<EmojiState, WSchema, EmojiMeta>({
         //收到按键，dispatch设为此plugin
         if(action === 'escape') {
           const { node, key } = payload
+          console.log(node.attrs)
           const emojiView = activeEmojiViews.get(node)
           if(!emojiView) 
             throw new Error('找不到该节点对应的emojiView')

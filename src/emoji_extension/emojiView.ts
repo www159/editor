@@ -1,6 +1,5 @@
-import { EventEmitter, WSchema } from "@editor/core";
+import { EventEmitter, WSchema, pmNode } from "@editor/core";
 import { basicDeselection, basicSelection, deConsView, reactDomAttach, reactDomUnattach } from "@editor/utils";
-import { pmNode } from "prosemirror-model";
 import { EditorState, Selection, TextSelection } from "prosemirror-state";
 import { EditorView, NodeView } from "prosemirror-view";
 import { css } from "@editor/core/utils/stringRenderer";
@@ -80,7 +79,7 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
                 const pos = getPos()
                 this.node.attrs.index = this.nowIndex;
                 (this.dom as HTMLElement).setAttribute('data-index', String(this.nowIndex))
-                dispatch(tr.setNodeMarkup(pos, this.node.type, { index: this.nowIndex }).setSelection(TextSelection.create(tr.doc, nextPos)).scrollIntoView());
+                dispatch(tr.setSelection(TextSelection.create(tr.doc, nextPos)).scrollIntoView());
                 console.log(this.outerView.state.doc.nodeAt(pos))
             }, 0)
         })

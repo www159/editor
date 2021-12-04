@@ -48,7 +48,12 @@ export class EventEmitter<T extends EventWrap, P extends PortWrap = any> {
 
         if(handlers) {
             handlers.forEach(handler => {
-                handler(...args)
+                try {
+                    handler(...args)
+                }
+                catch(e) {
+                    console.error(e)
+                }
             })
         }
 

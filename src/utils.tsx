@@ -1,5 +1,5 @@
 import { chainCommands, Command } from "prosemirror-commands";
-import { Fragment, pmNode, ResolvedPos, Schema } from "prosemirror-model";
+import { Fragment, ResolvedPos, Schema } from "prosemirror-model";
 import { EditorState, IMeta, Plugin, PluginKey, Transaction } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { findWrapping, Step, StepMap } from "prosemirror-transform"
@@ -7,7 +7,7 @@ import { ComponentType, PureComponent, ReactElement } from "react";
 import ReactDOM from "react-dom";
 
 // import { hot } from "react-hot-loader"
-import { DispatchFunc, Editor, EventEmitter, Realize, WSchema } from "./core";
+import { DispatchFunc, Editor, EventEmitter, Realize, WSchema, pmNode } from "./core";
 import React from "react"
 
 

@@ -49,7 +49,7 @@ export const layerExtension: Extension<LayerStorage> = {
     reducer() {
         const { emitter, storage: { layer } } = this
         emitter.onPort('layer', 'layer', (content, deplay, icon) => {
-            // console.log(content, deplay, icon)
+            if(icon === 'WRONG') throw new Error(content)
         })
         emitter.onPort('layer', 'confirm', (content, button, icon) => {
             // console.log(content, button, icon)
