@@ -3,7 +3,7 @@ import { recursiveTextSerializer } from "@editor/core/utils/recursiveTextSeriali
 import { chainCommands } from "prosemirror-commands";
 import { wrappingInputRule } from "prosemirror-inputrules";
 // import { keymap } from "prosemirror-keymap";
-import { NodeType } from "prosemirror-model";
+import { NodeType, WrapAttrN } from "prosemirror-model";
 import { deleteListItem } from "./commands/deleteListItem";
 import { liftListItem } from "./commands/liftListItem";
 import { newLineInList } from "./commands/newLineInList";
@@ -24,12 +24,17 @@ import { getTable } from "./utils/orderTable";
  */
 
 declare module '@editor/core' {
-    type listNodes = 
-    | 'ordered_list'
-    | 'bullet_list'
-    | 'list_item'
-
-    interface WNode extends ConsNode<listNodes> {}
+    interface WNode {
+        'ordered_list': {
+            start: number
+            type: string
+        }
+        'bullet_list': {
+            type: string
+        }
+        'list_item': {}
+    }
+    // interface WNode extends list_nodes {}
 }
 
 export const listExtensions: Extensions = [

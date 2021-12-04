@@ -1,7 +1,6 @@
-import { WSchema } from "@editor/core";
+import { WEditorView, WSchema, pmNode } from "@editor/core";
 import { ESCAPE_KEY } from "@editor/emoji_extension";
 import { pmFetch } from "@editor/utils";
-import { pmNode } from "prosemirror-model";
 import { Plugin, PluginKey, TextSelection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { EmojiView } from "./emojiView";
@@ -12,14 +11,14 @@ export interface EmojiState {
 
 export interface EmojiMeta {
   'escape': {
-    node: pmNode<WSchema>,
+    node: pmNode,
     key: ESCAPE_KEY,
   }
 }
 
 export const EMOJI_STATE_KEY = new PluginKey<EmojiState, WSchema, EmojiMeta>("emoji view tr")
 
-function createEmojiView(node: pmNode, view: EditorView, getPos: boolean | (() => number)) {
+function createEmojiView(node: pmNode, view: WEditorView, getPos: boolean | (() => number)) {
   const pluginState = EMOJI_STATE_KEY.getState(view.state)
   if(!pluginState) throw new Error('emoji plugin failed')
   let emojiViews = pluginState.activeEmojiViews

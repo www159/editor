@@ -1,0 +1,201 @@
+diff --git a/node_modules/@types/prosemirror-model/index.d.ts b/node_modules/@types/prosemirror-model/index.d.ts
+index f9042e9..d888184 100644
+--- a/node_modules/@types/prosemirror-model/index.d.ts
++++ b/node_modules/@types/prosemirror-model/index.d.ts
+@@ -1,4 +1,4 @@
+-// Type definitions for prosemirror-model 1.13
++    // Type definitions for prosemirror-model 1.13
+ // Project: https://github.com/ProseMirror/prosemirror-model
+ // Definitions by: Bradley Ayers <https://github.com/bradleyayers>
+ //                 David Hahn <https://github.com/davidka>
+@@ -405,15 +405,15 @@ export class DOMParser<S extends Schema = any> {
+  * `Schema`, which controls which types exist and which
+  * attributes they have.
+  */
+-export class Mark<S extends Schema = any> {
++export class Mark<S extends Schema = any, A extends Attributes = any, K extends unknown = any> {
+     /**
+      * The type of this mark.
+      */
+-    type: MarkType<S>;
++    type: MarkType<S, A, K>;
+     /**
+      * The attributes associated with this mark.
+      */
+-    attrs: { [key: string]: any };
++    attrs: A;
+     /**
+      * Given a set of marks, create a new set which contains this one as
+      * well, in the right position. If this mark is already in the set,
+@@ -469,17 +469,17 @@ export class Mark<S extends Schema = any> {
+  * **Do not** directly mutate the properties of a `Node` object. See
+  * [the guide](/docs/guide/#doc) for more information.
+  */
+-declare class ProsemirrorNode<S extends Schema = any> {
++declare class ProsemirrorNode<S extends Schema = any, A extends Attributes = any, K extends unknown = any> {
+     /**
+      * The type of node that this is.
+      */
+-    type: NodeType<S>;
++    type: NodeType<S, A, K>;
+     /**
+      * An object mapping attribute names to values. The kind of
+      * attributes allowed and required are
+      * [determined](#model.NodeSpec.attrs) by the node type.
+      */
+-    attrs: { [key: string]: any };
++    attrs: A;
+     /**
+      * A container holding the node's children.
+      */
+@@ -971,11 +971,11 @@ export class NodeRange<S extends Schema = any> {
+  * about the node type, such as its name and what kind of node it
+  * represents.
+  */
+-export class NodeType<S extends Schema = any> {
++export class NodeType<S extends Schema = any, A extends Attributes = any, K extends unknown = any> {
+     /**
+      * The name the node type has in this schema.
+      */
+-    name: string;
++    name: K;
+     /**
+      * A link back to the `Schema` the node type belongs to.
+      */
+@@ -1031,20 +1031,20 @@ export class NodeType<S extends Schema = any> {
+      * set of marks.
+      */
+     create(
+-        attrs?: { [key: string]: any } | null,
++        attrs?: A | null,
+         content?: Fragment<S> | ProsemirrorNode<S> | Array<ProsemirrorNode<S>>,
+         marks?: Array<Mark<S>>,
+-    ): ProsemirrorNode<S>;
++    ): ProsemirrorNode<S, A, K>;
+     /**
+      * Like [`create`](#model.NodeType.create), but check the given content
+      * against the node type's content restrictions, and throw an error
+      * if it doesn't match.
+      */
+     createChecked(
+-        attrs?: { [key: string]: any } | null,
++        attrs?: A | null,
+         content?: Fragment<S> | ProsemirrorNode<S> | Array<ProsemirrorNode<S>>,
+         marks?: Array<Mark<S>>,
+-    ): ProsemirrorNode<S>;
++    ): ProsemirrorNode<S, A, K>;
+     /**
+      * Like [`create`](#model.NodeType.create), but see if it is necessary to
+      * add nodes to the start or end of the given fragment to make it
+@@ -1054,10 +1054,10 @@ export class NodeType<S extends Schema = any> {
+      * `Fragment.empty` as content.
+      */
+     createAndFill(
+-        attrs?: { [key: string]: any } | null,
++        attrs?: A | null,
+         content?: Fragment<S> | ProsemirrorNode<S> | Array<ProsemirrorNode<S>>,
+         marks?: Array<Mark<S>>,
+-    ): ProsemirrorNode<S> | null | undefined;
++    ): ProsemirrorNode<S, A, K> | null | undefined;
+     /**
+      * Returns true if the given fragment is valid content for this node
+      * type with the given attributes.
+@@ -1082,11 +1082,11 @@ export class NodeType<S extends Schema = any> {
+  * [tagged](#model.Mark.type) with type objects, which are
+  * instantiated once per `Schema`.
+  */
+-export class MarkType<S extends Schema = any> {
++export class MarkType<S extends Schema = any, A extends Attributes = any, K extends unknown = any> {
+     /**
+      * The name of the mark type.
+      */
+-    name: string;
++    name: K;
+     /**
+      * The schema that this mark type instance is part of.
+      */
+@@ -1100,7 +1100,7 @@ export class MarkType<S extends Schema = any> {
+      * containing only some of the mark's attributes. The others, if
+      * they have defaults, will be added.
+      */
+-    create(attrs?: { [key: string]: any }): Mark<S>;
++    create(attrs?: A): Mark<S, A, K>;
+     /**
+      * When there is a mark of this type in the given set, a new set
+      * without it is returned. Otherwise, the input set is returned.
+@@ -1109,7 +1109,7 @@ export class MarkType<S extends Schema = any> {
+     /**
+      * Tests whether there is a mark of this type in the given set.
+      */
+-    isInSet(set: Array<Mark<S>>): Mark<S> | null | undefined;
++    isInSet(set: Array<Mark<S>>): Mark<S, A, K> | null | undefined;
+     /**
+      * Queries whether a given mark type is
+      * [excluded](#model.MarkSpec.excludes) by this one.
+@@ -1120,7 +1120,7 @@ export class MarkType<S extends Schema = any> {
+  * An object describing a schema, as passed to the [`Schema`](#model.Schema)
+  * constructor.
+  */
+-export interface SchemaSpec<N extends string = any, M extends string = any> {
++export interface SchemaSpec<N extends { [key: string]: unknown } = any, M extends { [key: string]: unknown } = any> {
+     /**
+      * The node types in this schema. Maps names to
+      * [`NodeSpec`](#model.NodeSpec) objects that describe the node type
+@@ -1129,14 +1129,14 @@ export interface SchemaSpec<N extends string = any, M extends string = any> {
+      * precedence by default, and which nodes come first in a given
+      * [group](#model.NodeSpec.group).
+      */
+-    nodes: { [name in N]: NodeSpec } | OrderedMap<NodeSpec>;
++    nodes: { [name in keyof N]: NodeSpec } | OrderedMap<NodeSpec>;
+     /**
+      * The mark types that exist in this schema. The order in which they
+      * are provided determines the order in which [mark
+      * sets](#model.Mark.addToSet) are sorted and in which [parse
+      * rules](#model.MarkSpec.parseDOM) are tried.
+      */
+-    marks?: { [name in M]: MarkSpec } | OrderedMap<MarkSpec> | null | undefined;
++    marks?: { [name in keyof M]: MarkSpec } | OrderedMap<MarkSpec> | null | undefined;
+     /**
+      * The name of the default top-level node for the schema. Defaults
+      * to `"doc"`.
+@@ -1311,13 +1311,25 @@ export interface AttributeSpec {
+      */
+     default?: any;
+ }
++
++interface Attributes {
++    [key: string]: unknown
++}
++
++interface WrapA {
++    [key: string]: Attributes
++}
++
++export type WrapAttrN = WrapA
++
++export type WrapAttrM = WrapA
+ /**
+  * A document schema. Holds [node](#model.NodeType) and [mark
+  * type](#model.MarkType) objects for the nodes and marks that may
+  * occur in conforming documents, and provides functionality for
+  * creating and deserializing such documents.
+  */
+-export class Schema<N extends string = any, M extends string = any> {
++export class Schema<N extends { [key: string]: unknown } = any, M extends { [key: string]: unknown } = any> {
+     /**
+      * Construct a schema from a schema [specification](#model.SchemaSpec).
+      */
+@@ -1333,11 +1345,11 @@ export class Schema<N extends string = any, M extends string = any> {
+     /**
+      * An object mapping the schema's node names to node type objects.
+      */
+-    nodes: { [name in N]: NodeType<Schema<N, M>> } & { [key: string]: NodeType<Schema<N, M>> };
++    nodes: { [name in keyof N]: NodeType<Schema<N, M>, N[name] extends Attributes ? Attributes : never, name> } & { [key: string]: NodeType<Schema<N, M>> };
+     /**
+      * A map from mark names to mark type objects.
+      */
+-    marks: { [name in M]: MarkType<Schema<N, M>> } & { [key: string]: MarkType<Schema<N, M>> };
++    marks: { [name in keyof M]: MarkType<Schema<N, M>, M[name] extends Attributes ? Attributes : never, name> } & { [key: string]: MarkType<Schema<N, M>> };
+     /**
+      * The type of the [default top node](#model.SchemaSpec.topNode)
+      * for this schema.

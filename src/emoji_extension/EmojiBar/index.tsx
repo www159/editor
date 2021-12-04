@@ -45,6 +45,7 @@ function setOpacity(selectedIndex: number, index: number) {
 const App: React.FC<AppProps> = ({ emitter, nowIndex }) => {
 
   const [selectedSheet, setSheet] = useState(0)
+
   const [selectedIndex, setIndex] = useState(-1)
 
   useEffect(function initSelectIndex() {
@@ -73,7 +74,8 @@ const App: React.FC<AppProps> = ({ emitter, nowIndex }) => {
     />)
   }
 
-  const emojiSprings = useSprings(emojiArr.length, 
+  const emojiSprings = useSprings(
+    emojiArr.length, 
     emojiArr.map((_, index) => ({ 
       config: {
         duration: 200,
@@ -104,7 +106,7 @@ const App: React.FC<AppProps> = ({ emitter, nowIndex }) => {
     sheets.push(<div key={`sheet${i}`} className="sheet">{emojis}</div>)
   }
 
-  useEffect(() => {
+  useEffect(function eventRec() {
     const off = emitter.on('escape', (dir: ESCAPE_KEY) => {
 
       if(dir === 'escape left') return

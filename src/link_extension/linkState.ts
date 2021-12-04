@@ -123,7 +123,7 @@ export function createLinkPlugin(editor: Editor, topDOM: HTMLElement) {
                 return false
             },
 
-            handleClickOn({ state }, __, node) {
+            handleClickOn({ state }) {
                 const { activePos } = LINK_PLUGIN_KEY.getState(state) as linkState
                 if(activePos !== null) {
                     editor.emitPort('link', 'leave input by click')

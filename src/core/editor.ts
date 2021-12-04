@@ -3,7 +3,7 @@ import { EditorState, Plugin, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { EventEmitter } from './eventEmitter'
 import {
-    EditorOptions, EditorPorts, Extension
+    EditorOptions, EditorPorts, Extension, WNode
 } from '.'
 import { keymap } from 'prosemirror-keymap'
 import { InputRule, inputRules } from 'prosemirror-inputrules'

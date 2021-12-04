@@ -1,5 +1,5 @@
-import { ConsNode, Extension, Extensions } from '@editor/core';
-import { NodeSpec, NodeType, pmNode } from 'prosemirror-model';
+import { ConsNode, Extension, Extensions, pmNode } from '@editor/core';
+import { NodeSpec, NodeType, WrapAttrN } from 'prosemirror-model';
 import { makeInlineMathInputRule, REGEX_INLINE_MATH_DOLLARS_ESCAPED, makeBlockMathInputrule, REGEX_BLOCK_MATH_DOLLARS, REGEX_INLINE_MATH_DOLLARS_LITE } from './plugins/mathInputrules';
 import { mathPlugin } from './mathPlugin';
 // import { mathNodes } from './mathSchema';
@@ -9,10 +9,11 @@ import { mathPreviewPlugin } from './plugins/mathPreview';
 import { nodesFromEditor } from '@editor/utils';
 
 declare module '@editor/core' {
-    type math_node =
-    | 'math_inline'
-    | 'math_display'
-    interface WNode extends ConsNode<math_node> {}
+    interface math_nodes {
+        'math_line': {}
+        'math_block': {}
+    }
+    interface WNode extends math_nodes {}
 }
 
 export const mathExtensions: Extensions = [

@@ -6,7 +6,7 @@ import { IconType } from ".";
 
 import './index.less'
 import { SmileSvg, TipSvg, WarnSvg, WrongSvg } from "./svgIcon";
-import { setTimeoutAsync } from "@editor/utils";
+import { multiOff, setTimeoutAsync } from "@editor/utils";
 
 interface AppProps {
   emitter: EditorEmitter
@@ -24,16 +24,18 @@ function selectSvg(icon: IconType) {
 const App: React.FC<AppProps> = ({ emitter }) => {
 
   const [layerDisp, setLayerDisp] = useState(false)
+
   const [confirmDisp, setConfirmDisp] = useState(false)
 
   const delayR = useRef<number>(0)
-  const iconR = useRef<IconType>('TIP')
-  const contentR = useRef<string>('')
-  const buttonR = useRef<[btn1: () => void, btn2?: () => void] | undefined>()
 
-  const queR = useRef<(() => void)[]>([])
+  const iconR = useRef<IconType>('TIP')
+
+  const contentR = useRef<string>('')
+
+  const buttonR = useRef<[btn1: () => void, btn2?: () => void] | undefined>()
  
-  useEffect(() => {
+  useEffect(function eventRec() {
     const offs = [
       emitter.onPort('layer', 'layer', (content, delay = 0, icon) => {
         contentR.current = content
@@ -50,7 +52,7 @@ const App: React.FC<AppProps> = ({ emitter }) => {
     ]
 
     return () => {
-      offs.forEach(off => off())
+      multiOff(offs)
     }
   }, [layerDisp, confirmDisp])
 

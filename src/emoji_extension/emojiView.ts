@@ -39,17 +39,22 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
         super()
         
         this.node = node
-        this.dom = document.createElement('emoji');
-        (this.dom as HTMLElement).style.cssText = css`
+        const { index } = this.node.attrs as { index: number }
+
+        const dom = document.createElement('emoji')
+        dom.setAttribute('data-index', String(index));
+        (dom as HTMLElement).style.cssText = css`
             border: none;
         `
+        this.dom = dom
+
         this.getPos = getPos
+
         this.outerView = view
+
         this.emojiBar = null
 
         this.nowIndex = node.attrs.index
-
-        const { index } = this.node.attrs as { index: number }
         if(index !== -1) {
             this.exitView(index)
         }
@@ -72,7 +77,11 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
                 const { tr, dispatch } = deConsView(this.outerView)
                 const nextPos = this.getPos() + 2
                 this.outerView.focus()
-                dispatch(tr.setSelection(TextSelection.create(tr.doc, nextPos)).scrollIntoView());
+                const pos = getPos()
+                this.node.attrs.index = this.nowIndex;
+                (this.dom as HTMLElement).setAttribute('data-index', String(this.nowIndex))
+                dispatch(tr.setNodeMarkup(pos, this.node.type, { index: this.nowIndex }).setSelection(TextSelection.create(tr.doc, nextPos)).scrollIntoView());
+                console.log(this.outerView.state.doc.nodeAt(pos))
             }, 0)
         })
         // this.on('emoji bar distroy', this.exitView)

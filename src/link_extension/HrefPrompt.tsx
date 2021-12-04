@@ -1,14 +1,15 @@
-import { EditorEmitter, EditorEvents, EventEmitter, WSchema } from '@editor/core'
+import { EditorEmitter, EditorEvents, EventEmitter } from '@editor/core'
 import { InlineBound, multiOff, pmEmit } from '@editor/utils'
 import { EditorView } from 'prosemirror-view'
 import React, { KeyboardEvent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { useSpring, a } from '@react-spring/web'
 import './index.less'
 import { LINK_PLUGIN_KEY } from './linkState'
+import { Schema } from 'prosemirror-model'
 
 interface HrefPromptProps {
   emitter: EditorEmitter
-  view: EditorView<WSchema>
+  view: EditorView<Schema>
 }
 
 declare module '@editor/core' {
@@ -90,9 +91,9 @@ const HrefPrompt: React.FC<HrefPromptProps> = ({ emitter, view }) => {
     }
   }, [activeInd])
 
-  useEffect(() => {
+  useEffect(function eventRec() {
     const offs = [
-      
+
       emitter.onPort('link', 'popup input', (href, title) => {
         setHref(href)
         setTitle(title)

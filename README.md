@@ -20,17 +20,18 @@
 - [x] 基本markdown输入规则
 - [x] 测试覆盖 badges （能显示就行）
 - [x] cypress
+- [x] react 单例缓冲层
+    - [x] link 单例
+    - [x] emoji 单例改造
+- [x] 链接节点
+- [x] 一堆bug
+- [x] undo redo
 
 **正在。。。**
-- [ ] 链接节点
-- [x] 一堆bug
 - [ ] monorepo
 - [ ] 单元测试
 - [ ] 解耦commond, 方便被调用(有必要吗？？？)
-- [ ] react 单例缓冲层
-    - [ ] link 单例
-    - [ ] emoji 单例改造
 - [ ] toggleNode 不灵活
-- [ ] undo redo
+- [ ] attrs 嵌入schema类型中
 道阻且长。
 

@@ -1,16 +1,17 @@
-import { DispatchFunc, EditorEvents, WSchema, EventEmitter, EditorEmitter } from "@editor/core";
+import { DispatchFunc, EditorEvents, EventEmitter, EditorEmitter, pmNode, WCommand, WSchema } from "@editor/core";
 import { css } from "@editor/core/utils/stringRenderer";
 import { createWrapper, inlineBound, makeTextFragment, multiSteps, parentPos, Procedure, setStyle } from "@editor/utils";
 import { Command } from "prosemirror-commands";
-import { NodeRange, NodeType, Fragment, Slice, pmNode } from "prosemirror-model";
+import { NodeRange, NodeType, Fragment, Slice, Schema } from "prosemirror-model";
 import { AllSelection, EditorState, NodeSelection, Selection, SelectionRange, TextSelection } from "prosemirror-state";
 import { findWrapping, ReplaceStep, ReplaceAroundStep, Step } from 'prosemirror-transform'
 import { EditorView } from "prosemirror-view";
 import { linkState, LINK_PLUGIN_KEY } from "./linkState";
 
-export function wrapInLink(linkType: NodeType, schema: WSchema, emitter: EventEmitter<EditorEvents>): Command {
+export function wrapInLink(linkType: NodeType, schema: WSchema, emitter: EventEmitter<EditorEvents>): WCommand {
     return (state, dispatch) => {
         const { $from, $to } = state.selection
+        if($from.parent.type.name === '')
         if($to.pos - $from.pos === 0) return false
         /*
         +++++LAST STEP: 选区非空+++++
@@ -78,7 +79,7 @@ export function wrapInLink(linkType: NodeType, schema: WSchema, emitter: EventEm
 // function wrappingLink(start, end)
 
 //如果出现重叠，重新分配选区。
-function overlapLink(state: EditorState, linkType: NodeType, schema: WSchema, emitter: EditorEmitter, dispatch?: DispatchFunc) {
+function overlapLink(state: EditorState, linkType: NodeType, schema: Schema, emitter: EditorEmitter, dispatch?: DispatchFunc) {
     let { $from, $to } = state.selection
     const fromLap = $from.parent.type === linkType
     const toLap = $to.parent.type === linkType
@@ -131,7 +132,7 @@ function overlapLink(state: EditorState, linkType: NodeType, schema: WSchema, em
 }
 
 //快捷键进入prompt
-export function wakeUpPrompt(view: EditorView<WSchema>, schema: WSchema, emitter: EditorEmitter): Command { 
+export function wakeUpPrompt(view: EditorView<Schema>, schema: Schema, emitter: EditorEmitter): Command { 
     return (state, dispatch) => {
         const { selection, tr } = state
         const { $from, $to } = selection

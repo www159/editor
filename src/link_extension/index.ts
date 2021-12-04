@@ -1,12 +1,18 @@
 import { ConsNode, Extensions } from "@editor/core";
 import { nodesFromEditor } from "@editor/utils";
 import { InputRule, textblockTypeInputRule, wrappingInputRule } from "prosemirror-inputrules";
-import { NodeType } from "prosemirror-model";
+import { NodeType, WrapAttrN } from "prosemirror-model";
 import { wakeUpPrompt, wrapInLink } from "./commands";
 import { createLinkPlugin } from "./linkState";
 
 declare module '@editor/core' {
-    interface WNode extends ConsNode<'link'> {}
+    interface WNode {
+        'link': {
+            href: string
+            title: string
+        }
+    }
+    // interface WNode extends link_node {}
 }
 
 export const linkExtensions: Extensions = [

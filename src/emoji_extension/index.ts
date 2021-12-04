@@ -1,6 +1,6 @@
-import { ConsNode, Extensions } from "@editor/core";
+import { ConsNode, Extensions, pmNode } from "@editor/core";
 import { InputRule } from "prosemirror-inputrules";
-import { NodeType, pmNode } from "prosemirror-model";
+import { NodeType, WrapAttrN } from "prosemirror-model";
 import { emojiPlugin } from "./emojiState";
 import { emojiInputRule } from "./inputrules";
 import "./index.less"
@@ -17,7 +17,13 @@ export type ESCAPE_KEY =
 
 
 declare module '@editor/core' {
-    interface WNode extends ConsNode<'emoji'> {}
+    // interface emoji_node  {
+    // }
+    interface WNode {
+        'emoji': {
+            indes: number
+        }
+    }
 }
 
 export const emojiExtensions: Extensions = [
@@ -40,7 +46,7 @@ export const emojiExtensions: Extensions = [
                         index: Number.parseInt(index)
                     }
                 } }],
-                toDOM: (node: pmNode) => ["emoji", { class: 'ProseMirror-emoji' }, 0]
+                toDOM: (node: pmNode) => ["emoji", { class: 'ProseMirror-emoji', 'data-index': node.attrs.index }, 0]
 
             }
         },

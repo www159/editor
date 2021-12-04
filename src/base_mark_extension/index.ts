@@ -1,14 +1,16 @@
 import { ConsMark, Extensions } from "@editor/core";
 import { toggleMark } from "prosemirror-commands";
-import { MarkType } from "prosemirror-model";
+import { MarkType, WrapAttrM } from "prosemirror-model";
 
 declare module '@editor/core' {
-    type base_mark = 
-    | 'em'
-    | 'strong'
-    | 'under_line'
+
+    interface WMark {
+        'em': {}
+        'strong': {}
+        'under_line': {}
+    }
     
-    interface WMark extends ConsMark<base_mark> {}
+    // interface WMark extends base_?marks {}
 }
 
 export const baseMarkExtensions: Extensions = [
