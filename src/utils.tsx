@@ -7,7 +7,7 @@ import { ComponentType, PureComponent, ReactElement } from "react";
 import ReactDOM from "react-dom";
 
 // import { hot } from "react-hot-loader"
-import { DispatchFunc, Editor, EventEmitter, Realize, WSchema } from "./core";
+import { CmdExecuter, DispatchFunc, Editor, EventEmitter, ExecCmdFunc, Realize, WrapCmdFunc, WSchema } from "./core";
 import React from "react"
 
 
@@ -101,7 +101,6 @@ export class Procedure<T> {
     }
 }
 
-/**@deprecated */
 export function setStyle(elm: HTMLElement, style: string) {
     elm.style.cssText = style
 }
@@ -138,19 +137,18 @@ export function createWrapper(wrappers: Realize<ReturnType<typeof findWrapping>>
     return content
 }
 
-export function serialCommands(...commands: Command[]) {
-    return function(state: EditorState, dispatch: DispatchFunc, view: EditorView): boolean {
-        for(let i = 0; i < commands.length; i++) {
-            let result = commands[i](state, dispatch, view)
-            
-            state = view.state
-            if(i + 1 === commands.length) {
-                return result
-            }
-        }
-        return true
+
+export const serialCommands = (givenView?: EditorView) => (...commands: Command[]) => (state: EditorState, dispatch: DispatchFunc, view?: EditorView) => {
+    let result = true
+    for(let i = 0; i < commands.length; i++) {
+        result &&= commands[i](state, dispatch, view)
+        state = givenView?.state || view?.state || state
     }
+    return result
 }
+// export function serialCommands(...commands: Command[]) {
+//     return function
+// }
 
 export function makeTextFragment<S extends WSchema>(text: string | null | undefined, schema: S): Fragment<S> {
     if(!text) return Fragment.empty
@@ -198,6 +196,11 @@ export function nodesFromEditor(editor: Editor) {
     return nodes
 }
 
+export function nodesFromState(state: EditorState<WSchema>) {
+    const { schema: { nodes } } = state
+    return nodes
+}
+
 export function marksFromEditor(editor: Editor) {
     const { schema: { marks } } = editor
     return marks
@@ -215,4 +218,16 @@ export async function setTimeoutAsync(fn: () => Promise<void>, delay: number) {
 
 export function multiOff(offs: (() => void)[]) {
     offs.forEach(off => off())
+}
+
+/*********************************** commond resolve  ***********************************/
+
+export const pmCmdBlender = (result: boolean) => () => result
+
+export const applyExecuter = (executer: CmdExecuter) => (...cmds: WrapCmdFunc[]): ExecCmdFunc => (props) => executer(props)(...cmds)
+
+export const editorBlender = (editor: Editor) => (cmd: ExecCmdFunc) => () => {
+    const { state, view } = editor
+    const { dispatch } = view
+    return cmd({ state, view, dispatch, emitter: editor })
 }

@@ -50,12 +50,12 @@ export function deleteListItem(itemType: NodeType, view: EditorView): Command {
         }
 
         //如果和上一层同级
-        return serialCommands(
+        return serialCommands(view)(
             // lastNested ? 
             // sinkListItem(itemType) :
             // (state, dispatch) => true,
             Backspace,
             Backspace
-        )(state, dispatch, view)
+        )(state, dispatch)
     }
 }

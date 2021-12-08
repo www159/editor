@@ -14,6 +14,7 @@ export const emojiInputRule = (type: NodeType) => (new InputRule(
         if(!$start.parent.canReplaceWith($start.index(), $end.index(), type))
             return null
 
+        // console.log(start, end)
         tr.replaceRangeWith(start, end, type.create({ attrs: { index: 0 } }))
         return tr.setSelection(NodeSelection.create(tr.doc, start))
     }

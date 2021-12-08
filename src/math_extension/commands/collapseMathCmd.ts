@@ -58,6 +58,7 @@ export function collaspeMathCmd(
 
             if(!outerState.doc.nodeAt(targetPos) && mode === displayMode.display) {
                 let flag = createParagraphNear(outerState, outerView.dispatch)
+                console.log(flag)
                 if(flag && dir > 0) 
                     outerView.focus()
                 return flag

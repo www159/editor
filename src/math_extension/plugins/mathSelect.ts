@@ -9,7 +9,6 @@ type CheckSelectionParams = {
 
 const customBlock = [
     /^math-.+/,
-    /emoji/
 ]
 
 const checkSelection = (arg: CheckSelectionParams) => {

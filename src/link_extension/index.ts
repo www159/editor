@@ -1,8 +1,8 @@
 import { ConsNode, Extensions } from "@editor/core";
-import { nodesFromEditor } from "@editor/utils";
-import { InputRule, textblockTypeInputRule, wrappingInputRule } from "prosemirror-inputrules";
+import { executeCmdsStrit, executeCmdsTry } from "@editor/core/commandsHelper";
+import {  applyExecuter, nodesFromEditor, pmCmdBlender } from "@editor/utils";
 import { NodeType, WrapAttrN } from "prosemirror-model";
-import { wakeUpPrompt, wrapInLink } from "./commands";
+import { toggleLink, wakeUpLinkPrompt } from "./commands";
 import { createLinkPlugin } from "./linkState";
 
 declare module '@editor/core' {
@@ -45,11 +45,9 @@ export const linkExtensions: Extensions = [
         },
 
         shortcutKey() {
-            const { link } = nodesFromEditor(this.editor)
-            const { schema, view } = this.editor
             return {
-                'Ctrl-Alt-l': wrapInLink(link, schema, this.editor),
-                'Ctrl-Enter': wakeUpPrompt(view, schema, this.editor)
+                'Ctrl-Alt-l': applyExecuter(executeCmdsTry)(toggleLink),
+                'Ctrl-Enter': applyExecuter(executeCmdsTry)(wakeUpLinkPrompt),
             }
         },
 

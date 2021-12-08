@@ -1,4 +1,5 @@
 import { Editor, EditorEvents, Extension } from "@editor/core";
+import { editorBlender } from "@editor/utils";
 import { inputRules } from "prosemirror-inputrules";
 import { keymap } from "prosemirror-keymap";
 import { NodeType, MarkType } from "prosemirror-model";
@@ -19,9 +20,8 @@ export function bindFunc(extension: Extension, context: {
     }
     if(extension.shortcutKey) {
         // console.log(extension.shortcutKey   )
-        plugins.push(
-            keymap(extension.shortcutKey.apply(context))
-        )
+        const wrapKeymap = extension.shortcutKey.apply(context)
+        plugins.push(keymap(Object.fromEntries(Object.entries(wrapKeymap).map(([name, wrapCmd]) => [name, editorBlender(editor)(wrapCmd)]))))
     }
 
     if(extension.wrappedPlugin) {

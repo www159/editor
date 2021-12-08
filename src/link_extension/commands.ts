@@ -1,224 +1,141 @@
-import { DispatchFunc, EditorEvents, EventEmitter, EditorEmitter } from "@editor/core";
+import { DispatchFunc, EditorEvents, EventEmitter, EditorEmitter, WSchema, Editor, WrapCmdFunc } from "@editor/core";
+import { executeCmdsTry, serialCmd, selectCmd, chain} from "@editor/core/commandsHelper";
 import { css } from "@editor/core/utils/stringRenderer";
-import { createWrapper, inlineBound, makeTextFragment, multiSteps, parentPos, Procedure, setStyle } from "@editor/utils";
-import { Command } from "prosemirror-commands";
+import { createWrapper, inlineBound, makeTextFragment, multiSteps, nodesFromState, parentPos, Procedure, serialCommands, setStyle } from "@editor/utils";
+import { chainCommands, Command, selectParentNode, wrapIn } from "prosemirror-commands";
 import { NodeRange, NodeType, Fragment, Slice, pmNode, Schema } from "prosemirror-model";
-import { AllSelection, EditorState, NodeSelection, Selection, SelectionRange, TextSelection } from "prosemirror-state";
+import { AllSelection, EditorState, NodeSelection, Selection, SelectionRange, TextSelection, Transaction } from "prosemirror-state";
 import { findWrapping, ReplaceStep, ReplaceAroundStep, Step } from 'prosemirror-transform'
 import { EditorView } from "prosemirror-view";
 import { linkState, LINK_PLUGIN_KEY } from "./linkState";
 
-export function wrapInLink(linkType: NodeType, schema: Schema, emitter: EventEmitter<EditorEvents>): Command {
-    return (state, dispatch) => {
-        const { $from, $to } = state.selection
-        if($to.pos - $from.pos === 0) return false
-        /*
-        +++++LAST STEP: 选区非空+++++
-        
-                      +------+
-                      |------|
-                      |------|
-                      |------|
-                  *---+------+---*
-                   *------------*
-                     *--------*
-                       *----*
-                         **
-        */
-        if(overlapLink(state, linkType, schema, emitter, dispatch)) return false
-        /*
-        +++++LAST STEP: 选区没有和其他link重叠+++++
-        
-                      +------+
-                      |------|
-                      |------|
-                      |------|
-                  *---+------+---*
-                   *------------*
-                     *--------*
-                       *----*
-                         **
-        */
-        const range = new NodeRange($from, $to, $from.depth)
-        const wrappers = findWrapping(range, linkType)
-        if(!wrappers) return false
-        /*
-        +++++LAST STEP: 选区能够被link包含+++++
-        
-                      +------+
-                      |------|
-                      |------|
-                      |------|
-                  *---+------+---*
-                   *------------*
-                     *--------*
-                       *----*
-                         **
-        */   
-        if(dispatch) {
-            const content = createWrapper(wrappers)
-            const { tr } = state
-            const { start, end } = range
-            tr.step(new ReplaceAroundStep(
-                start,
-                end,
-                start,
-                end,
-                new Slice(content, 0, 0),
-                wrappers.length,
-                true
-            ))
-            dispatch(tr.scrollIntoView())
-        }
-
-        return true
+export const setLink: WrapCmdFunc = ({ state, dispatch }) => {
+    const { tr } = state
+    const { link } = nodesFromState(state)
+    const { $from, $to } = tr.selection
+    if($to.pos - $from.pos === 0) return false
+    
+    const range = new NodeRange($from, $to, $from.depth)
+    const wrappers = findWrapping(range, link)
+    if(!wrappers) return false
+    if(dispatch) {
+        // const content = createWrapper(wrappers)
+        const { tr } = state
+        const { start, end } = range
+        tr
+        .wrap(range, wrappers)
+        .setSelection(TextSelection.create(tr.doc, tr.mapping.map(start), tr.mapping.map(end, -1)))
+        .scrollIntoView()
+        dispatch(tr)
     }
-}
+    // console.log(tr.steps)
+    return true
+} 
 
 // function wrappingLink(start, end)
 
-//如果出现重叠，重新分配选区。
-function overlapLink(state: EditorState, linkType: NodeType, schema: Schema, emitter: EditorEmitter, dispatch?: DispatchFunc) {
-    let { $from, $to } = state.selection
-    const fromLap = $from.parent.type === linkType
-    const toLap = $to.parent.type === linkType
-    if(fromLap || toLap) {
-        if(!(fromLap && toLap) && dispatch) dispatch(state.tr.setSelection(new NodeSelection(parentPos(fromLap ? $from : $to))))
-        emitter.emitPort('layer', 'layer', "link边缘不能重叠", 800, 'WRONG')
-        return false
-    }
-    /*
-    +++++LAST STEP: 首位没有重叠+++++
-    
-                  +------+
-                  |------|
-                  |------|
-                  |------|
-              *---+------+---*
-               *------------*
-                 *--------*
-                   *----*
-                     **
-    */
+const unsetLink: WrapCmdFunc = ({ state, dispatch }) => {
+    const {$from, $to} = state.selection
+    const { schema } = state
+    const { link } = schema.nodes
     let fromNextPos = $from.pos
     let toPrevPos = $to.pos
-    fromNextPos = fromNextPos > $to.pos ? $from.pos : fromNextPos
-    toPrevPos = toPrevPos < $from.pos ? $to.pos : toPrevPos
     const { tr } = state
     let containerLink = false
+    // console.log('same p', $from.sameParent($to))
+    if($from.parent.type === link && $from.sameParent($to)) {
+      fromNextPos = $from.before()
+      toPrevPos = $to.after()
+    }
+    // console.log({fromNextPos, toPrevPos})
     if(dispatch) {
         const clearLink: ReplaceStep[] = []
         tr.doc.nodesBetween(fromNextPos, toPrevPos, (node, pos, parent) => {
-            // debugger
             if(parent.type === schema.nodes.doc) return true;
-
-            if(node.type === linkType) {
+        
+            if(node.type === link) {
                 //如果是linknode，则取消改节点。
                 let $pos = tr.doc.resolve(pos + 1)
                 const start = pos, end = pos + node.nodeSize
+                // tr.maybeStep(new ReplaceStep(start, end, new Slice(node.content, 0, 0)))
                 clearLink.push(new ReplaceStep(start, end, new Slice(node.content, 0, 0)))
                 containerLink = true
                 return false
             }
             return true
         })
-
         multiSteps(tr, clearLink)
-        dispatch(tr)
+        const fromMappingPos = tr.mapping.map(fromNextPos)
+        const toMappingPos = tr.mapping.map(toPrevPos)
+        containerLink && dispatch(tr.setSelection(TextSelection.create(tr.doc, fromMappingPos, toMappingPos)))
     }
-
     return containerLink
 }
 
-//快捷键进入prompt
-export function wakeUpPrompt(view: EditorView<Schema>, schema: Schema, emitter: EditorEmitter): Command { 
-    return (state, dispatch) => {
-        const { selection, tr } = state
-        const { $from, $to } = selection
-
-        if(!$from.sameParent($to)) return false
-        /*
-        +++++LAST STEP: in the same link+++++
-        
-                      +------+
-                      |------|
-                      |------|
-                      |------|
-                  *---+------+---*
-                   *------------*
-                     *--------*
-                       *----*
-                         **
-        */
-
-        const range = $from.blockRange($to)
-        let linkParent = $from.parent
-        const linkIsParent = linkParent.type === schema.nodes.link
-        if(!linkIsParent) return false
-        /*
-        +++++LAST STEP: link is parent+++++
-        
-                      +------+
-                      |------|
-                      |------|
-                      |------|
-                  *---+------+---*
-                   *------------*
-                     *--------*
-                       *----*
-                         **
-        */
-
-        if(!range) return false
-        /*
-        +++++LAST STEP: have range+++++
-        
-                      +------+
-                      |------|
-                      |------|
-                      |------|
-                  *---+------+---*
-                   *------------*
-                     *--------*
-                       *----*
-                         **
-        */
-        if(dispatch) {
-            const { start } = range
-            // console.log(start, state.doc.nodeAt(start))
-            const { href, title } = linkParent.attrs
-            const { prompt } = LINK_PLUGIN_KEY.getState(state) as linkState
-            const { left, right, bottom } = inlineBound(view, start - 1)
-            setStyle(prompt, css`
-              display : '';
-              `)
-            const { width } = prompt.getBoundingClientRect()
-            setStyle(prompt, css`
-              display: '';
-              left: ${right - left < width ? right - width : left}px;
-              top: ${bottom}px;
-            `)
-            /*
-            +++++LAST STEP: show prompt+++++
-            
-                          +------+
-                          |------|
-                          |------|
-                          |------|
-                      *---+------+---*
-                       *------------*
-                         *--------*
-                           *----*
-                             **
-            */
-            emitter.emitPort('link', 'popup input', href, title)
-            dispatch(tr.setMeta(LINK_PLUGIN_KEY, {
-                action: 'active link input',
-                payload: {
-                    pos: start
-                }
-            }))
-        }
+//如果出现重叠，重新分配选区。
+const overlapLink: WrapCmdFunc = ({ emitter, state }) => {
+    let { $from, $to } = state.selection
+    const { link } = nodesFromState(state)
+    const fromLap = $from.parent.type === link
+    const toLap = $to.parent.type === link
+    const embed = $from.sameParent($to)
+    if(fromLap && toLap && !embed) {
+        emitter.emitPort('layer', 'layer', "link边缘不能重叠", 800, 'WRONG')
         return true
     }
+    return false
 }
+
+//快捷键进入prompt
+export const wakeUpLinkPrompt: WrapCmdFunc = ({ emitter, state, view, dispatch }) => { 
+    const { schema } = state
+    const { selection, tr } = state
+    const { $from, $to } = selection
+    //@ts-ignore
+    // console.log(state.doc.toString(), '\n', tr.docs)
+    if(!$from.sameParent($to)) return false
+    const range = $from.blockRange($to)
+    let linkParent = tr.selection.$from.parent
+    const linkIsParent = linkParent.type === schema.nodes.link
+    // console.log('wakeUp', tr.selection.toJSON())
+    if(!linkIsParent) return false
+    if(!range) return false
+    if(dispatch) {
+        const { start } = range
+        // console.log(start, state.doc.nodeAt(start))
+        const { href, title } = linkParent.attrs
+        const { prompt } = LINK_PLUGIN_KEY.getState(state) as linkState
+        const { left, right, bottom } = inlineBound(view, start)
+        setStyle(prompt, css`
+          display : '';
+          `)
+        const { width } = prompt.getBoundingClientRect()
+        setStyle(prompt, css`
+          display: '';
+          left: ${right - left < width ? right - width : left}px;
+          top: ${bottom}px;
+        `)
+        emitter.emitPort('link', 'popup input', href, title)
+        dispatch(tr.setMeta(LINK_PLUGIN_KEY, {
+            action: 'active link input',
+            payload: {
+                pos: start
+            }
+        }))
+    }
+    return true
+}
+
+export const setLink_WakeUpLinkPrompt: WrapCmdFunc = ({ serial }) => serial(setLink, wakeUpLinkPrompt)
+
+export const removeLinkPrompt: WrapCmdFunc = ({ emitter, state }) => {
+    const { activePos } = LINK_PLUGIN_KEY.getState(state) as linkState
+    if(activePos !== null) {
+        emitter.emitPort('link', 'leave input by click')
+        return true
+    }
+    return false
+}
+
+
+export const toggleLink: WrapCmdFunc = chain(overlapLink, unsetLink, setLink_WakeUpLinkPrompt)

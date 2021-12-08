@@ -1,11 +1,13 @@
 import { Editor, EditorEmitter, EditorEvents, EventEmitter, WSchema } from "@editor/core";
-import { pmFetch, reactDirAttach, setStyle } from "@editor/utils";
+import { applyExecuter, editorBlender, pmFetch, reactDirAttach, setStyle } from "@editor/utils";
 import { css } from "@editor/core/utils/stringRenderer";
 import { NodeType, pmNode, Schema } from "prosemirror-model";
 import { IMeta, Plugin, PluginKey, Transaction } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import HrefPrompt from "./HrefPrompt";
 import { renderGrouped } from "prosemirror-menu";
+import { removeLinkPrompt } from "./commands";
+import {  executeCmdsTry     } from "@editor/core/commandsHelper";
 
 export interface linkState {
     activePos: number | null
@@ -49,7 +51,6 @@ export function createLinkPlugin(editor: Editor, topDOM: HTMLElement) {
                 // setStyle(prompt, css`display: none`)
                 reactDirAttach(HrefPrompt, { emitter: editor, view: editor.view }, prompt)
                 return {
-                    storedLink: new WeakMap,
                     activePos: null,
                     prompt
                 }
@@ -63,16 +64,13 @@ export function createLinkPlugin(editor: Editor, topDOM: HTMLElement) {
                     switch(action) {
                         case 'active link input': {
                             const { pos } = meta.payload
+                            console.log('recieve')
                             return {
                                 ...value,
                                 activePos: pos,
                             }
                         }
                         case 'exit link input': {
-                            const { prompt } = value
-                            // setStyle(prompt, css`
-                            //     display: none;
-                            // `)
                             setTimeout(() => {
                                 editor.view.focus()
                             }, 20)
@@ -123,13 +121,8 @@ export function createLinkPlugin(editor: Editor, topDOM: HTMLElement) {
                 return false
             },
 
-            handleClickOn({ state }) {
-                const { activePos } = LINK_PLUGIN_KEY.getState(state) as linkState
-                if(activePos !== null) {
-                    editor.emitPort('link', 'leave input by click')
-                    return true
-                }
-                return false
+            handleClickOn() {
+                return editorBlender(editor)(applyExecuter(executeCmdsTry)(removeLinkPrompt))()
             }
         }
     })

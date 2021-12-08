@@ -4,8 +4,9 @@ import { NodeType, WrapAttrN, pmNode } from "prosemirror-model";
 import { emojiPlugin } from "./emojiState";
 import { emojiInputRule } from "./inputrules";
 import "./index.less"
-import { escapeBar } from "./commands/escapeBar";
-import { makeTextFragment, nodesFromEditor } from "@editor/utils";
+import { escapeBar, insertEmoji } from "./commands";
+import { applyExecuter, makeTextFragment, nodesFromEditor } from "@editor/utils";
+import { executeCmdsTry, hyperCmdBind } from "@editor/core/commandsHelper";
 
 export type ESCAPE_KEY = 
                     | 'up' 
@@ -41,6 +42,7 @@ export const emojiExtensions: Extensions = [
                         default: 0,
                     },
                 },
+                marks: 'em strong',
                 parseDOM: [{ tag: 'emoji', getAttrs: (node) => {
                     const index = (node as HTMLElement).getAttribute('data-index')
                     if(!index) return null
@@ -50,7 +52,9 @@ export const emojiExtensions: Extensions = [
                 }, /* getContent: (p, schema) => {
                     return makeTextFragment('123', schema)
                 } */}],
-                toDOM: (node: pmNode) => ["emoji", {'data-index': node.attrs.index }, 0]
+                toDOM: (node: pmNode) => ["emoji", {'data-index': node.attrs.index }, 0],
+                
+                allowGapCursor: true
             }
         },
         inputRules() {
@@ -59,13 +63,15 @@ export const emojiExtensions: Extensions = [
         },
 
         shortcutKey() {
+            const applyTryCmd = applyExecuter(executeCmdsTry)
             return {
-                "ArrowUp": escapeBar(this.type as NodeType, 'up'),
-                "ArrowDown": escapeBar(this.type as NodeType, 'down'),
-                "ArrowLeft": escapeBar(this.type as NodeType, 'left'),
-                "ArrowRight": escapeBar(this.type as NodeType, 'right'),
-                "Enter": escapeBar(this.type as NodeType, 'enter'),
-                "Ctrl-ArrowLeft": escapeBar(this.type as NodeType, 'escape left')
+                "ArrowUp": applyTryCmd(escapeBar('up')),
+                "ArrowDown": applyTryCmd(escapeBar('down')),
+                "ArrowLeft": applyTryCmd(escapeBar('left')),
+                "ArrowRight": applyTryCmd(escapeBar('right')),
+                "Enter": applyTryCmd(escapeBar('enter')),
+                "Ctrl-ArrowLeft": applyTryCmd(escapeBar('escape left')),
+                "Ctrl-alt-e": applyTryCmd(insertEmoji)
             }
         }
     },

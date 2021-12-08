@@ -27,12 +27,13 @@
 
     .math-src {
         display: none;
-        color: rgb(132, 33, 162);
+        color: @math-font-color;
         tab-size: 4;
     }
 
     &.ProseMirror-selectednode {
         outline: none;
+        border: none;
         .math-src {
             display: inline;
         }
@@ -94,6 +95,7 @@ math-display {
         .ProseMirror {
             width: 100%;
             display: block;
+            background-color: @panel-bg-color;
         }
 
         &::after {
@@ -116,7 +118,11 @@ math-display {
 .math-preview {
     text-align: center;
     display: block;
-    margin: 0 0.5em;
+    margin: 0 0.5em;    
+    .katex-display {
+        margin: 0;
+        margin-top: 2px;
+    }
 }
 // .math-preview::after {
 //     content: "☁";

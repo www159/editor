@@ -1,8 +1,8 @@
 import { EventEmitter, WSchema } from "@editor/core";
 import { basicDeselection, basicSelection, deConsView, reactDomAttach, reactDomUnattach } from "@editor/utils";
 import { pmNode } from "prosemirror-model";
-import { EditorState, Selection, TextSelection } from "prosemirror-state";
-import { Decoration, DecorationSet, EditorView, NodeView } from "prosemirror-view";
+import { TextSelection } from "prosemirror-state";
+import { EditorView, NodeView } from "prosemirror-view";
 import { css } from "@editor/core/utils/stringRenderer";
 
 import { EMOJI_STATE_KEY } from "./emojiState";
@@ -38,10 +38,6 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
     constructor(node: pmNode, view: EditorView, getPos: () => number) {
 
         super()
-        console.log('create')
-        console.log(view.state.doc.toJSON())
-
-        console.log(node)
         this.node = node
         const { index } = this.node.attrs as { index: number }
 
@@ -58,7 +54,6 @@ export class EmojiView extends EventEmitter<EmojiEvents> implements NodeView<WSc
 
         this.emojiBar = null
 
-        console.log(node.attrs.index)
         this.nowIndex = node.attrs.index
         if(index !== -1) {
             this.exitView(index)

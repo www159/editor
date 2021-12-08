@@ -4,7 +4,7 @@ import { DispatchFunc } from "@editor/core";
 import { Command } from "prosemirror-commands";
 
 export function insertMathCmd(mathNodeType: NodeType, initialText = ''): Command {
-    return function(state: EditorState, dispatch: DispatchFunc) {
+    return function(state, dispatch) {
         let { $from } = state.selection,
             index = $from.index() 
 

@@ -45,8 +45,7 @@ export const mathExtensions: Extensions = [
                     math_inline
                 )
             ]
-        }
-
+        },
     },
 
     {

@@ -175,8 +175,6 @@ export class MathView extends EventEmitter<MathEvents> implements NodeView, Curs
     update(node: pmNode, decorations: Array<Decoration>) {
         if(!node.sameMarkup(this.doc)) return false
         this.doc = node
-        // console.log('deco', decorations)
-        console.log('update')
         if(this.innerView) {
             let { state } = this.innerView
 

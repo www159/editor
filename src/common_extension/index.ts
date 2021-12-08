@@ -1,8 +1,9 @@
 import { ConsNode, Extension, Extensions } from "@editor/core";
 import { baseKeymap, chainCommands, exitCode } from "prosemirror-commands";
 // import { keymap } from "prosemirror-keymap";
-import { history, undo, redo } from 'prosemirror-history'
-import { WrapAttrN } from "prosemirror-model";
+import { history, undo, redo } from 'prosemirror-history';
+import { gapCursor } from 'prosemirror-gapcursor'
+import '../../node_modules/prosemirror-gapcursor/style/gapcursor.css'
 
 declare module '@editor/core' {
     interface WNode {
@@ -70,6 +71,8 @@ export const commonExtensions: Extensions = [
                 history({
                     newGroupDelay: 100
                 }),
+                gapCursor(),
+                
             ]
         },
         shortcutKey() {

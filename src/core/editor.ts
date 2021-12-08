@@ -40,7 +40,7 @@ export class Editor extends EventEmitter<EditorEvents, EditorPorts>  {
 
     // resolver: ExtensionResolver
 
-    public view: EditorView
+    public view: EditorView<WSchema>
 
     constructor(options: EditorOptions) {
         super()
