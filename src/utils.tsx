@@ -224,7 +224,7 @@ export function multiOff(offs: (() => void)[]) {
 
 export const pmCmdBlender = (result: boolean) => () => result
 
-export const applyExecuter = (executer: CmdExecuter) => (...cmds: WrapCmdFunc[]): ExecCmdFunc => (props) => executer(props)(...cmds)
+export const applyExecuter  = (executer: CmdExecuter) => (...cmds: WrapCmdFunc[]): ExecCmdFunc => (props) => executer(props)(...cmds)
 
 export const editorBlender = (editor: Editor) => (cmd: ExecCmdFunc) => () => {
     const { state, view } = editor

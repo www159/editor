@@ -45,9 +45,10 @@ export const linkExtensions: Extensions = [
         },
 
         shortcutKey() {
+            const { appliedStrict } = this
             return {
-                'Ctrl-Alt-l': applyExecuter(executeCmdsTry)(toggleLink),
-                'Ctrl-Enter': applyExecuter(executeCmdsTry)(wakeUpLinkPrompt),
+                'Ctrl-Alt-l': appliedStrict(toggleLink),
+                'Ctrl-Enter': appliedStrict(wakeUpLinkPrompt),
             }
         },
 

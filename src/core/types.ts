@@ -76,6 +76,11 @@ export type InputRulesFunc = (this: {
 
 export type shortcutKeyFunc = (this: {
     editor: Editor,
+    appliedCan: appliedExecuter
+    appliedTry: appliedExecuter
+    appliedStrict: appliedExecuter
+    applyer: executerApplyer
+    
 }) => WrapKeymap
 
 export type wrappedPluginFunc = (this: {
@@ -202,9 +207,11 @@ export type WrapCmdFunc = (props: CommandProps) => boolean
 
 export type ExecCmdFunc = (props: ExecuterProps) => boolean
 
-export type CmdExecuter = (props: ExecuterProps) => (...cmds: WrapCmdFunc[]) => boolean
+export type CmdExecuter = (props: ExecuterProps, initTr?: Transaction<WSchema>) => (...cmds: WrapCmdFunc[]) => boolean
 
-export type appliedExecuter = (...cmds: WrapCmdFunc[]) => WrapCmdFunc
+export type appliedExecuter = (...cmds: WrapCmdFunc[]) => ExecCmdFunc
+
+export type executerApplyer = (executer: CmdExecuter) => (...cmds: WrapCmdFunc[]) => ExecCmdFunc
 
 export type HyperCmd<A extends any[]> = (...args: A) => (props: ExecuterProps) => boolean
 

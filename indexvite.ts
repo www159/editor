@@ -9,7 +9,7 @@ import { EditorView } from "prosemirror-view";
 import appDevTools from 'prosemirror-dev-tools'
 // import '@editor/node_modules/katex/dist/katex.min.css'
 
-const editor = new Editor({
+const editor = Editor.create({
     content: 
     html`
     <h2>测试<emoji data-index="17"></emoji></h2>

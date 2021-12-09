@@ -48,23 +48,23 @@ export const hyperCmdBind = <A extends any[]>(hypeCmd: HyperCmd<A>) => (...args:
 
 /**
  * chainSelectCmd用作
+ * select是一个转接口。亦是一个命令
  * @param cmds 
  * @returns 
  */
-const executeCmdSelect = (executer: CmdExecuter): CmdExecuter => (props: ExecuterProps) => (...cmds: WrapCmdFunc[]) => {
+const executeCmdSelect = (executer: CmdExecuter): CmdExecuter => (props: ExecuterProps, initTr) => (...cmds: WrapCmdFunc[]) => {
+    const cmdProps: CommandProps = {
+        ...props,
+        serial: executer(props, initTr),
+        select: executeCmdSelect(executer)(props, initTr)
+    }
+    console.log('select')
     for(let i = 0; i < cmds.length; i++) {
-        console.log(executer.toString())
-        if(executer(props)(cmds[i])) return true
+        if(cmds[i](cmdProps)) return true
     }
     return false
 }
 
-export const chain = (...cmds: WrapCmdFunc[]) => (props: CommandProps) => {
-    for(let i = 0; i < cmds.length; i++) {
-        if(cmds[i](props)) return true
-    }
-    return false
-}
 
 export const selectCmd = (...cmds: WrapCmdFunc[]): WrapCmdFunc => (props) => props.select(...cmds)
 
@@ -80,10 +80,10 @@ export const executeCmdsStrit: CmdExecuter = (props) => (...cmds) => {
         select: executeCmdSelect(executeCmdsStrit)(props)
     }
     
-    
-    cmds.forEach(cmd => {
+    props.view.dispatch(props.state.tr)
+    for(let i = 0; i < cmds.length; i++) {
         try {
-            const result = cmd(cmdProps)
+            const result = cmds[i](cmdProps)
             // console.log('in executer', cmds.length, props.state.selection.toJSON())
             cmdProps.state = cmdProps.view.state
             if(result === false)
@@ -93,43 +93,43 @@ export const executeCmdsStrit: CmdExecuter = (props) => (...cmds) => {
             console.error(e)
             return false
         }
-        
-    })
+    }
     return true
 }
 
 //试图全部执行后再返回是否全部执行。使用兼容模式
-export const executeCmdsTry: CmdExecuter = (props) => (...cmds) => {
+export const executeCmdsTry: CmdExecuter = (props, initTr) => (...cmds) => {
+    const fromInitTr = !!initTr
+    const tr = fromInitTr ? initTr : props.state.tr
     const cmdProps = {
-        ...rxProps(props),
+        ...rxProps(tr, props),
         dispatch: pseudoDispatch,
-        serial: executeCmdsTry(props),
-        select: executeCmdSelect(executeCmdsTry)(props)
+        serial: executeCmdsTry(props, tr),
+        select: executeCmdSelect(executeCmdsTry)(props, tr)
     }
     let result = true
-    cmds.forEach(cmd => {
-        result = result && cmd(cmdProps)
-    })
+    for(let i = 0; i < cmds.length; i++) {
+        result = result && cmds[i](cmdProps)
+    }
     //真正的dispatch
     // const {  dispatch } = cmdProps
-    const { state, view } = cmdProps
-    console.log(state.tr.steps)
-    view.dispatch(state.tr)
+    const { view } = cmdProps
+    if(!fromInitTr) view.dispatch(tr)
     return result
 }
 
 //只验证是否能执行
 export const executeCmdsCan: CmdExecuter = (props) => (...cmds) => {
     const cmdProps: CommandProps = {
-        ...rxProps(props),
+        ...rxProps(props.state.tr, props),
         dispatch: undefined,
         serial: executeCmdsCan(props),
         select: executeCmdSelect(executeCmdsCan)(props),
     }
     let result = true
-    cmds.forEach(cmd => {
-        result = result && cmd(cmdProps)
-    })
+    for(let i = 0; i < cmds.length; i++) {
+        result = result && cmds[i](cmdProps)
+    }
     return result
 }
 
@@ -158,9 +158,8 @@ export const pseudoDispatch = (tr: Transaction<WSchema>) => false
 //当然如果传入的任务自带拦截器，则异常处理交给拦截器
 
 
-export const rxProps = (props: ExecuterProps): ExecuterProps => {
+export const rxProps = (tr: Transaction, props: ExecuterProps): ExecuterProps => {
     const { state } = props.view
-    const { tr } = state
     return {
         ...props,
         state: serialableState(state, tr)

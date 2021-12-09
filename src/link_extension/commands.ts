@@ -126,6 +126,8 @@ export const wakeUpLinkPrompt: WrapCmdFunc = ({ emitter, state, view, dispatch }
     return true
 }
 
+
+
 export const setLink_WakeUpLinkPrompt: WrapCmdFunc = ({ serial }) => serial(setLink, wakeUpLinkPrompt)
 
 export const removeLinkPrompt: WrapCmdFunc = ({ emitter, state }) => {
@@ -138,4 +140,4 @@ export const removeLinkPrompt: WrapCmdFunc = ({ emitter, state }) => {
 }
 
 
-export const toggleLink: WrapCmdFunc = chain(overlapLink, unsetLink, setLink_WakeUpLinkPrompt)
+export const toggleLink: WrapCmdFunc = ({ select }) => select(overlapLink, unsetLink, setLink_WakeUpLinkPrompt)

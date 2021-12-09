@@ -32,6 +32,11 @@
 - [ ] 单元测试
 - [ ] 解耦commond, 方便被调用(有必要吗？？？)
 - [ ] toggleNode 不灵活
-- [ ] attrs 嵌入schema类型中
+
+**理想的模板：react-prompt模板，react-view模板，menu类，隐藏的command函数**
+- [ ] 1
+- [ ] 2
+- [ ] 3
+- [ ] 4
 道阻且长。
 

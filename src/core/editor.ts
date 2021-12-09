@@ -12,7 +12,6 @@ import { ExtensionResolver } from './extensionResolver'
 import { elementFromString } from './utils/elementFromString'
 import { EditorEvents, WSchema } from '@editor/core'
 // import { isConstTypeReference } from 'typescript'
-
 declare module '@editor/core' {
     interface EditorEvents {
         'create': [props: { editor: Editor }]
@@ -139,6 +138,10 @@ export class Editor extends EventEmitter<EditorEvents, EditorPorts>  {
         this.emit('destroy')
         this.view && this.view.destroy()
         this.destoryAllListeners()
+    }
+
+    public static create(options: EditorOptions) {
+        return new Editor(options)
     }
 
 }

@@ -1,9 +1,18 @@
 import { Editor, EditorEvents, Extension } from "@editor/core";
-import { editorBlender } from "@editor/utils";
+import { applyExecuter, editorBlender } from "@editor/utils";
 import { inputRules } from "prosemirror-inputrules";
 import { keymap } from "prosemirror-keymap";
 import { NodeType, MarkType } from "prosemirror-model";
 import { Plugin } from "prosemirror-state";
+import { executeCmdsCan, executeCmdsStrit, executeCmdsTry } from "../commandsHelper";
+
+const executeContext = {
+    appliedStrict: applyExecuter(executeCmdsStrit),
+    appliedTry: applyExecuter(executeCmdsTry),
+    appliedCan: applyExecuter(executeCmdsCan),
+    applyer: applyExecuter
+
+}
 
 export function bindFunc(extension: Extension, context: {
     editor: Editor,
@@ -20,7 +29,10 @@ export function bindFunc(extension: Extension, context: {
     }
     if(extension.shortcutKey) {
         // console.log(extension.shortcutKey   )
-        const wrapKeymap = extension.shortcutKey.apply(context)
+        const wrapKeymap = extension.shortcutKey.apply({
+            ...executeContext,
+            editor
+        })
         plugins.push(keymap(Object.fromEntries(Object.entries(wrapKeymap).map(([name, wrapCmd]) => [name, editorBlender(editor)(wrapCmd)]))))
     }
 
