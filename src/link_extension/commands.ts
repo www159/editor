@@ -1,12 +1,9 @@
-import { DispatchFunc, EditorEvents, EventEmitter, EditorEmitter, WSchema, Editor, WrapCmdFunc } from "@editor/core";
-import { executeCmdsTry, serialCmd, selectCmd, chain} from "@editor/core/commandsHelper";
+import { WrapCmdFunc } from "@editor/core";
 import { css } from "@editor/core/utils/stringRenderer";
-import { createWrapper, inlineBound, makeTextFragment, multiSteps, nodesFromState, parentPos, Procedure, serialCommands, setStyle } from "@editor/utils";
-import { chainCommands, Command, selectParentNode, wrapIn } from "prosemirror-commands";
+import { inlineBound, multiSteps, nodesFromState, setStyle } from "@editor/utils";
 import { NodeRange, NodeType, Fragment, Slice, pmNode, Schema } from "prosemirror-model";
-import { AllSelection, EditorState, NodeSelection, Selection, SelectionRange, TextSelection, Transaction } from "prosemirror-state";
-import { findWrapping, ReplaceStep, ReplaceAroundStep, Step } from 'prosemirror-transform'
-import { EditorView } from "prosemirror-view";
+import { TextSelection } from "prosemirror-state";
+import { findWrapping, ReplaceStep } from 'prosemirror-transform'
 import { linkState, LINK_PLUGIN_KEY } from "./linkState";
 
 export const setLink: WrapCmdFunc = ({ state, dispatch }) => {

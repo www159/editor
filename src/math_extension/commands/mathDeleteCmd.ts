@@ -1,9 +1,9 @@
 import { Command } from "prosemirror-commands";
 import { EditorState, NodeSelection } from "prosemirror-state";
-import { DispatchFunc } from "@editor/core";
+import { DispatchFunc, WrapCmdFunc } from "@editor/core";
 import { Procedure } from "@editor/utils";
 
-export const mathDeleteCmd: Command = (state: EditorState, dispatch: DispatchFunc) => {
+export const mathDeleteCmd: WrapCmdFunc = ({ state, dispatch }) => {
     let { $from } = state.selection
     let { nodeBefore } = $from
     let index = $from.index();
@@ -25,7 +25,6 @@ export const mathDeleteCmd: Command = (state: EditorState, dispatch: DispatchFun
 	}
 
 
-	console.log(posBefore)
 	let $posBefore = state.doc.resolve(posBefore)
 	if(dispatch) {
 		dispatch(state.tr.setSelection(new NodeSelection($posBefore)));

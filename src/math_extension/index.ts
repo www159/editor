@@ -81,8 +81,9 @@ export const mathExtensions: Extensions = [
             mathPlugin,
         ],
         shortcutKey() {
+            const { appliedTry } = this
             return {
-                'Backspace': mathDeleteCmd
+                'Backspace': appliedTry(mathDeleteCmd)
             }
         }
     }

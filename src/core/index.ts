@@ -1,3 +1,10 @@
+import wrapBaseKeymap from './common/basicKeymap'
+
+
+
+export {
+    wrapBaseKeymap
+}
 export {
     Editor
 } from './editor'
@@ -5,3 +12,4 @@ export {
 export {
     EventEmitter
 } from './eventEmitter'
+

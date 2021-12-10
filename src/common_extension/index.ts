@@ -1,9 +1,11 @@
 import { ConsNode, Extension, Extensions } from "@editor/core";
-import { baseKeymap, chainCommands, exitCode } from "prosemirror-commands";
+import { chainCommands, exitCode } from "prosemirror-commands";
+import { wrapBaseKeymap } from "@editor/core";
 // import { keymap } from "prosemirror-keymap";
 import { history, undo, redo } from 'prosemirror-history';
 import { gapCursor } from 'prosemirror-gapcursor'
 import '../../node_modules/prosemirror-gapcursor/style/gapcursor.css'
+import { wrapRaw } from "@editor/core/commandsHelper";
 
 declare module '@editor/core' {
     interface WNode {
@@ -76,10 +78,11 @@ export const commonExtensions: Extensions = [
             ]
         },
         shortcutKey() {
+            const { appliedStrict } = this
             return {
-                ...baseKeymap,
-                'Mod-z': undo,
-                'Mod-y': redo,
+                ...wrapBaseKeymap,
+                'Mod-z': appliedStrict(wrapRaw(undo)),
+                'Mod-y': appliedStrict(wrapRaw(redo)),
             }
         }
     }

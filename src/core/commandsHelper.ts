@@ -87,7 +87,9 @@ export const executeCmdsStrit: CmdExecuter = (props) => (...cmds) => {
             // console.log('in executer', cmds.length, props.state.selection.toJSON())
             cmdProps.state = cmdProps.view.state
             if(result === false)
-                throw new Error('串行命令中断')
+                if( i < cmds.length - 1) throw new Error('串行命令中断')
+                else return false
+            
         }
         catch(e) {
             console.error(e)
@@ -167,7 +169,6 @@ export const rxProps = (tr: Transaction, props: ExecuterProps): ExecuterProps =>
 }
 
 export const serialableState = (state: EditorState, tran: Transaction): EditorState => {
-    // let { selection, doc, storedMarks } = tran
     return {
         ...state,
         schema: state.schema,
@@ -188,9 +189,6 @@ export const serialableState = (state: EditorState, tran: Transaction): EditorSt
         get tr() {
             return tran
         },
-        get rxed() {
-            return true
-        }
     }
 } 
 

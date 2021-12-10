@@ -1,5 +1,6 @@
 import { ConsNode, Extensions } from "@editor/core";
 import { recursiveTextSerializer } from "@editor/core/utils/recursiveTextSerializer";
+import { nodesFromEditor } from "@editor/utils";
 import { chainCommands } from "prosemirror-commands";
 import { wrappingInputRule } from "prosemirror-inputrules";
 // import { keymap } from "prosemirror-keymap";
@@ -87,8 +88,10 @@ export const listExtensions: Extensions = [
             },
         },
         shortcutKey() {
+            const { editor, appliedTry } = this
+            const { ordered_list } = nodesFromEditor(editor)
             return {
-                'Ctrl-Shift-8': wrapInList(this.type as NodeType),            
+                'Ctrl-Shift-8': appliedTry(wrapInList(ordered_list)),            
             }
         },
 
@@ -150,8 +153,10 @@ export const listExtensions: Extensions = [
             }
         },
         shortcutKey() {
+            const { editor, appliedTry } = this
+            const { bullet_list } = nodesFromEditor(editor)
             return {
-                'Ctrl-Shift-9': wrapInList(this.type as NodeType)
+                'Ctrl-Shift-9': appliedTry(wrapInList(bullet_list))
             }
         },
         inputRules() {
@@ -182,12 +187,14 @@ export const listExtensions: Extensions = [
             }
         },
         shortcutKey() {
+            const { editor, appliedTry } = this
+            const { list_item } = nodesFromEditor(editor)
             return {
-                'Enter': splitListItem(this.type as NodeType),
-                'Tab': sinkListItem(this.type as NodeType),
-                'Shift-Tab': liftListItem(this.type as NodeType),
-                'Ctrl-Enter': newLineInList(this.type as NodeType),
-                'Backspace': deleteListItem(this.type as NodeType, this.editor.view),
+                'Enter': appliedTry(splitListItem(list_item)),
+                'Tab': appliedTry(sinkListItem(list_item)),
+                'Shift-Tab': appliedTry(liftListItem(list_item)),
+                'Ctrl-Enter': appliedTry(newLineInList),
+                'Backspace': appliedTry(deleteListItem(list_item)),
                 // 'Tab': sinkListItem(this.type as NodeType),
             }
         }

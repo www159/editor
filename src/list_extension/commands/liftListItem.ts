@@ -1,21 +1,20 @@
-import { DispatchFunc } from "@editor/core";
+import { DispatchFunc, WrapCmdFunc } from "@editor/core";
+import { nodesFromState } from "@editor/utils";
 import { useFakeServer } from "cypress/types/sinon";
 import { Command } from "prosemirror-commands";
 import { Fragment, NodeRange, NodeType, pmNode, Slice } from "prosemirror-model";
 import { EditorState } from "prosemirror-state";
 import { ReplaceAroundStep, liftTarget } from 'prosemirror-transform'
 
-export function liftListItem(itemType: NodeType): Command {
-    return function(state: EditorState, dispatch: DispatchFunc) {
-        let { $from, $to } = state.selection,
-            range = $from.blockRange($to, node => !!node.childCount && node.firstChild?.type === itemType)
-        if(!range) return false
-        if(!dispatch) return true
-        if($from.node(range.depth - 1).type === itemType)
-            return liftToOuterList(state, dispatch, itemType, range)
-        else 
-            return liftOutOfList(state, dispatch, range)
-    }
+export const liftListItem = (itemType: NodeType): WrapCmdFunc => ({ state, dispatch }) => {
+    let { $from, $to } = state.selection,
+        range = $from.blockRange($to, node => !!node.childCount && node.firstChild?.type === itemType)
+    if(!range) return false
+    if(!dispatch) return true
+    if($from.node(range.depth - 1).type === itemType)
+        return liftToOuterList(state, dispatch, itemType, range)
+    else 
+        return liftOutOfList(state, dispatch, range)
 }
 
 function liftToOuterList(

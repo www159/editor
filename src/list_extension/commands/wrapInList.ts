@@ -1,4 +1,4 @@
-import { DispatchFunc, Realize } from "@editor/core";
+import { DispatchFunc, Realize, WrapCmdFunc } from "@editor/core";
 import { createWrapper } from "@editor/utils";
 import { Command } from "prosemirror-commands";
 import { Fragment, NodeRange, NodeType, Slice } from "prosemirror-model";
@@ -7,47 +7,43 @@ import { findWrapping, ReplaceAroundStep, canSplit, canJoin } from 'prosemirror-
 
 /*********************************** 包裹函数 ***********************************/
 
-export function wrapInList(listType: NodeType, attrs?: { [name: string]: any }): Command {
-    return (state: EditorState, dispatch: DispatchFunc) => {
-        let { $from, $to } = state.selection
-        let range = $from.blockRange($to),
-            doJoin = false,
-            outerRange = range
-
-        // console.log(range?.depth)
-        if(!range) return false
-        if(
-            range.depth >= 2 &&
-            $from.node(range.depth - 1).type.compatibleContent(listType) &&
-            range.startIndex === 0
-        ) {
-            if($from.index(range.depth - 1) == 0) return false
-            let $insert = state.doc.resolve(range.$from.before())
-            outerRange = new NodeRange($insert, $insert, range.depth)
-            if(range.endIndex < range.parent.childCount) {
-                range = new NodeRange($from, state.doc.resolve($to.end(range.depth)), range.depth)
-            }
-            doJoin = true
+export const wrapInList = (listType: NodeType, attrs?: { [name: string]: any }): WrapCmdFunc => ({ state, dispatch }) => {
+    let { $from, $to } = state.selection
+    let range = $from.blockRange($to),
+        doJoin = false,
+        outerRange = range
+    // console.log(range?.depth)
+    if(!range) return false
+    if(
+        range.depth >= 2 &&
+        $from.node(range.depth - 1).type.compatibleContent(listType) &&
+        range.startIndex === 0
+    ) {
+        if($from.index(range.depth - 1) == 0) return false
+        let $insert = state.doc.resolve(range.$from.before())
+        outerRange = new NodeRange($insert, $insert, range.depth)
+        if(range.endIndex < range.parent.childCount) {
+            range = new NodeRange($from, state.doc.resolve($to.end(range.depth)), range.depth)
         }
-
-        // debugger
-        let wrap = findWrapping(outerRange as NodeRange, listType, attrs, range)
-        // console.log(wrap)
-        if(!wrap) return false
-        if(dispatch) {
-            dispatch(
-                doWrapInList(
-                    state.tr,
-                    range,
-                    wrap,
-                    doJoin,
-                    listType
-                )
-                .scrollIntoView()
-            )
-        }
-        return true
+        doJoin = true
     }
+    // debugger
+    let wrap = findWrapping(outerRange as NodeRange, listType, attrs, range)
+    // console.log(wrap)
+    if(!wrap) return false
+    if(dispatch) {
+        dispatch(
+            doWrapInList(
+                state.tr,
+                range,
+                wrap,
+                doJoin,
+                listType
+            )
+            .scrollIntoView()
+        )
+    }
+    return true
 }
 
     
