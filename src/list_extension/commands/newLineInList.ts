@@ -6,14 +6,14 @@ import { Fragment, NodeRange, NodeType, Slice } from "prosemirror-model";
 import { EditorState } from "prosemirror-state";
 import { ReplaceAroundStep, findWrapping } from 'prosemirror-transform'
 
-export const newLineInList: WrapCmdFunc = ({ state, serial }) => {
+export const newLineInList = (itemType: NodeType): WrapCmdFunc => ({ state, serial }) => {
     let { $from, $to } = state.selection,
-        grandParent = $from.node(-1),
-        { list_item } = nodesFromState(state)
+        grandParent = $from.node(-1)
+        // { list_item } = nodesFromState(state)
 
     if(
         $from.depth < 2 ||
-        grandParent.type !== list_item ||
+        grandParent.type !== itemType ||
         !$from.sameParent($to) 
     ) {
         return false

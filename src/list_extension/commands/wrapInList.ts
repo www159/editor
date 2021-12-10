@@ -29,6 +29,7 @@ export const wrapInList = (listType: NodeType, attrs?: { [name: string]: any }):
     }
     // debugger
     let wrap = findWrapping(outerRange as NodeRange, listType, attrs, range)
+    console.log(wrap, listType.name)
     // console.log(wrap)
     if(!wrap) return false
     if(dispatch) {

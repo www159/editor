@@ -181,7 +181,7 @@ export const listExtensions: Extensions = [
             list_item: {
                 content: 'paragraph block*',
                 parseDOM: [{ tag: 'li' }],
-                toDOM: () => ['li', 0],
+                toDOM: () => ['li', { style: 'margin-left: -1em' }, 0],
                 defining: true,
                 toText: (node, indent) => {
                     //list-item只有一个子节点
@@ -196,10 +196,12 @@ export const listExtensions: Extensions = [
                 'Enter': splitListItem(list_item),
                 'Tab': sinkListItem(list_item),
                 'Shift-Tab': liftListItem(list_item),
-                'Ctrl-Enter': newLineInList,
+                'Ctrl-Enter': newLineInList(list_item),
                 'Backspace': deleteListItem(list_item),
                 // 'Tab': sinkListItem(this.type as NodeType),
             }
         }
     },
 ]
+
+export { wrapInList, sinkListItem, liftListItem, deleteListItem, splitListItem, newLineInList }

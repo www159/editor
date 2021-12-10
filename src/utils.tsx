@@ -3,12 +3,13 @@ import { Fragment, ResolvedPos, Schema, pmNode } from "prosemirror-model";
 import { EditorState, IMeta, Plugin, PluginKey, Transaction } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { findWrapping, Step, StepMap } from "prosemirror-transform"
-import { ComponentType, PureComponent, ReactElement } from "react";
+import { ComponentType, DependencyList, PureComponent, ReactElement, useEffect } from "react";
 import ReactDOM from "react-dom";
 
 // import { hot } from "react-hot-loader"
-import { CmdExecuter, DispatchFunc, Editor, EventEmitter, ExecCmdFunc, Realize, WrapCmdFunc, WSchema } from "./core";
+import { CmdExecuter, DispatchFunc, Editor, EditorEmitter, EditorPorts, EventEmitter, ExecCmdFunc, Realize, WrapCmdFunc, WSchema } from "./core";
 import React from "react"
+import { css } from "./core/utils/stringRenderer";
 
 
 
@@ -51,6 +52,7 @@ export function attachGlobal(view: EditorView, dom: Node) {
     if(father) father.appendChild(dom)
     return dom
 }
+
 
 /*********************************** resolve if...else... ***********************************/
 
@@ -105,6 +107,24 @@ export function setStyle(elm: HTMLElement, style: string) {
     elm.style.cssText = style
 }
 
+
+export function appendStyle(elm: HTMLElement, style: string) {
+    const prevStyle = elm.getAttribute('style')
+    elm.style.cssText = `
+        ${prevStyle}
+        ${style}
+    `
+}
+
+export function wakeUpBar(elm: HTMLElement, view: EditorView, pos: number) {
+    const { left, right, bottom } = inlineBound(view, pos)
+    const { width } = elm.getBoundingClientRect()
+    setStyle(elm, css`
+        display: '';
+        left: ${right - left < width ? right - width : left}px;
+        top: ${bottom}px;
+    `)
+}
 /*********************************** event emit among prosemirror plugins  ***********************************/
 
 export function deConsView(view: EditorView) {

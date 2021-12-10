@@ -16,7 +16,8 @@ import { getNextAttr } from "../utils/getNextAttr";
  */
 export const sinkListItem = (itemType: NodeType): WrapCmdFunc => ({ state, dispatch }) => {
     let { $from, $to } = state.selection,
-        range = $from.blockRange($to, node => node.childCount !== 0 && node.firstChild?.type == itemType)
+        range = $from.blockRange($to, node => node.childCount !== 0 && node.firstChild?.type == itemType),
+        { list_item } = nodesFromState(state)
     if(!range) return false
     /*
     +++++LAST STEP: 选区在list中+++++
@@ -61,13 +62,14 @@ export const sinkListItem = (itemType: NodeType): WrapCmdFunc => ({ state, dispa
                    *----*
                      **
     */
+    console.log(111111)
     if(dispatch) {
         //如果上一个节点也是嵌套的话，融入上一个节点
         // debugger
         let isLastNested = nodeBefore.lastChild && nodeBefore.lastChild.type == parent.type,
             inner = Fragment.from(isLastNested ? itemType.create() as pmNode : undefined),
             slice = new Slice(
-                Fragment.from(itemType.create(null, Fragment.from(parent.type.create(getNextAttr(parent), inner)))),
+                Fragment.from(itemType.create(null, Fragment.from(parent.type.create(itemType === list_item ? getNextAttr(parent) : null, inner)))),
                 isLastNested ? 3 : 1,
                 0
             ),

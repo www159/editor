@@ -2,9 +2,9 @@ import { EventEmitter } from "@editor/core"
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from "react"
 // import { hot } from "react-hot-loader"
 // import { Wrapper } from "./style"
-import emojiArr from "../data.json"
+import emojiArr from "./data.json"
 import { a, useSprings } from "@react-spring/web"
-import { ESCAPE_KEY, EmojiEvents } from ".."
+import { ESCAPE_KEY, EmojiEvents } from "."
 
 /**
  * 需要的组件

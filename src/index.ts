@@ -7,7 +7,9 @@ import { emojiExtensions } from './emoji_extension'
 import { baseMarkExtensions } from './base_mark_extension'
 import { linkExtensions } from './link_extension'
 
+
 import { layerExtension } from './layer_extension'
+import { taskExtensions } from './task_extension'
 import { Procedure } from './utils'
 export {
     Editor
@@ -24,6 +26,7 @@ extensions.push(
     ...listExtensions,  
     ...emojiExtensions,
     layerExtension,
+    ...taskExtensions,
 )
 
 // console.log(extensions)

@@ -1,6 +1,6 @@
 import { WrapCmdFunc } from "@editor/core";
 import { css } from "@editor/core/utils/stringRenderer";
-import { inlineBound, multiSteps, nodesFromState, setStyle } from "@editor/utils";
+import { appendStyle, inlineBound, multiSteps, nodesFromState, setStyle, wakeUpBar } from "@editor/utils";
 import { NodeRange, NodeType, Fragment, Slice, pmNode, Schema } from "prosemirror-model";
 import { TextSelection } from "prosemirror-state";
 import { findWrapping, ReplaceStep } from 'prosemirror-transform'
@@ -49,7 +49,7 @@ const unsetLink: WrapCmdFunc = ({ state, dispatch }) => {
         const clearLink: ReplaceStep[] = []
         tr.doc.nodesBetween(fromNextPos, toPrevPos, (node, pos, parent) => {
             if(parent.type === schema.nodes.doc) return true;
-        
+            
             if(node.type === link) {
                 //如果是linknode，则取消改节点。
                 let $pos = tr.doc.resolve(pos + 1)
@@ -102,16 +102,7 @@ export const wakeUpLinkPrompt: WrapCmdFunc = ({ emitter, state, view, dispatch }
         // console.log(start, state.doc.nodeAt(start))
         const { href, title } = linkParent.attrs
         const { prompt } = LINK_PLUGIN_KEY.getState(state) as linkState
-        const { left, right, bottom } = inlineBound(view, start)
-        setStyle(prompt, css`
-          display : '';
-          `)
-        const { width } = prompt.getBoundingClientRect()
-        setStyle(prompt, css`
-          display: '';
-          left: ${right - left < width ? right - width : left}px;
-          top: ${bottom}px;
-        `)
+        wakeUpBar(prompt, view, start)
         emitter.emitPort('link', 'popup input', href, title)
         dispatch(tr.setMeta(LINK_PLUGIN_KEY, {
             action: 'active link input',

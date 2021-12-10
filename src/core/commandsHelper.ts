@@ -53,13 +53,13 @@ export const hyperCmdBind = <A extends any[]>(hypeCmd: HyperCmd<A>) => (...args:
  * @returns 
  */
 const executeCmdSelect = (executer: CmdExecuter): CmdExecuter => (props: ExecuterProps, initTr) => (...cmds: WrapCmdFunc[]) => {
-    const cmdProps: CommandProps = {
-        ...props,
-        serial: executer(props, initTr),
-        select: executeCmdSelect(executer)(props, initTr)
-    }
+    // const cmdProps: CommandProps = {
+    //     ...props,
+    //     serial: executer(props, initTr),
+    //     select: executeCmdSelect(executer)(props, initTr)
+    // }
     for(let i = 0; i < cmds.length; i++) {
-        if(cmds[i](cmdProps)) return true
+        if(executer(props, initTr)(cmds[i])) return true
     }
     return false
 }
