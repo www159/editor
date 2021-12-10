@@ -1,5 +1,5 @@
 import { Editor, EditorEmitter, EditorEvents, EventEmitter, WSchema } from "@editor/core";
-import { applyExecuter, editorBlender, pmFetch, reactDirAttach, setStyle } from "@editor/utils";
+import { applyExecuter, pmFetch, reactDirAttach, setStyle } from "@editor/utils";
 import { css } from "@editor/core/utils/stringRenderer";
 import { NodeType, pmNode, Schema } from "prosemirror-model";
 import { IMeta, Plugin, PluginKey, Transaction } from "prosemirror-state";
@@ -7,7 +7,8 @@ import { EditorView } from "prosemirror-view";
 import HrefPrompt from "./HrefPrompt";
 import { renderGrouped } from "prosemirror-menu";
 import { removeLinkPrompt } from "./commands";
-import {  executeCmdsTry     } from "@editor/core/commandsHelper";
+import {  executeCmdsTry } from "@editor/core/commandsHelper";
+import { editorBlender } from "@editor/core/utils/editorBlender";
 
 export interface linkState {
     activePos: number | null
@@ -64,7 +65,6 @@ export function createLinkPlugin(editor: Editor, topDOM: HTMLElement) {
                     switch(action) {
                         case 'active link input': {
                             const { pos } = meta.payload
-                            console.log('recieve')
                             return {
                                 ...value,
                                 activePos: pos,
@@ -113,7 +113,6 @@ export function createLinkPlugin(editor: Editor, topDOM: HTMLElement) {
         props: {
             handleDoubleClickOn(_, __, node) {
                 if(node.type.name === 'link') {
-                    console.log(node.attrs)
                     const { href } = node.attrs
                     window.open(href, '_blank')
                     return true

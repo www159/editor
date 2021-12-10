@@ -88,10 +88,10 @@ export const listExtensions: Extensions = [
             },
         },
         shortcutKey() {
-            const { editor, appliedTry } = this
+            const { editor } = this
             const { ordered_list } = nodesFromEditor(editor)
             return {
-                'Ctrl-Shift-8': appliedTry(wrapInList(ordered_list)),            
+                'Ctrl-Shift-8': wrapInList(ordered_list),            
             }
         },
 
@@ -153,10 +153,13 @@ export const listExtensions: Extensions = [
             }
         },
         shortcutKey() {
-            const { editor, appliedTry } = this
+            const { editor } = this
             const { bullet_list } = nodesFromEditor(editor)
             return {
-                'Ctrl-Shift-9': appliedTry(wrapInList(bullet_list))
+                'Ctrl-Shift-9': {
+                    type: 'strict',
+                    cmd: wrapInList(bullet_list),
+                }
             }
         },
         inputRules() {
@@ -187,14 +190,14 @@ export const listExtensions: Extensions = [
             }
         },
         shortcutKey() {
-            const { editor, appliedTry } = this
+            const { editor } = this
             const { list_item } = nodesFromEditor(editor)
             return {
-                'Enter': appliedTry(splitListItem(list_item)),
-                'Tab': appliedTry(sinkListItem(list_item)),
-                'Shift-Tab': appliedTry(liftListItem(list_item)),
-                'Ctrl-Enter': appliedTry(newLineInList),
-                'Backspace': appliedTry(deleteListItem(list_item)),
+                'Enter': splitListItem(list_item),
+                'Tab': sinkListItem(list_item),
+                'Shift-Tab': liftListItem(list_item),
+                'Ctrl-Enter': newLineInList,
+                'Backspace': deleteListItem(list_item),
                 // 'Tab': sinkListItem(this.type as NodeType),
             }
         }

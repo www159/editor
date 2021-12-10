@@ -76,12 +76,7 @@ export type InputRulesFunc = (this: {
 }) => Array<InputRule<WSchema>>
 
 export type shortcutKeyFunc = (this: {
-    editor: Editor,
-    appliedCan: appliedExecuter
-    appliedTry: appliedExecuter
-    appliedStrict: appliedExecuter
-    applyer: executerApplyer
-    
+    editor: Editor
 }) => WrapKeymap
 
 export type wrappedPluginFunc = (this: {
@@ -218,6 +213,6 @@ export type HyperCmd<A extends any[]> = (...args: A) => (props: ExecuterProps) =
 
 export type keyboardCmd = () => WrapCmdFunc
 
-export type WrapKeymap = { [key: string]: ExecCmdFunc }
+export type WrapKeymap = { [key: string]: (WrapCmdFunc | commandPack) }
 
 }

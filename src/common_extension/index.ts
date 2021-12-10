@@ -78,11 +78,10 @@ export const commonExtensions: Extensions = [
             ]
         },
         shortcutKey() {
-            const { appliedStrict } = this
             return {
                 ...wrapBaseKeymap,
-                'Mod-z': appliedStrict(wrapRaw(undo)),
-                'Mod-y': appliedStrict(wrapRaw(redo)),
+                'Mod-z': wrapRaw(undo),
+                'Mod-y': wrapRaw(redo),
             }
         }
     }

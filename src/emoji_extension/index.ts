@@ -63,15 +63,14 @@ export const emojiExtensions: Extensions = [
         },
 
         shortcutKey() {
-            const { appliedTry } = this
             return {
-                "ArrowUp": appliedTry(escapeBar('up')),
-                "ArrowDown": appliedTry(escapeBar('down')),
-                "ArrowLeft": appliedTry(escapeBar('left')),
-                "ArrowRight": appliedTry(escapeBar('right')),
-                "Enter": appliedTry(escapeBar('enter')),
-                "Ctrl-ArrowLeft": appliedTry(escapeBar('escape left')),
-                "Ctrl-alt-e": appliedTry(insertEmoji)
+                "ArrowUp": escapeBar('up'),
+                "ArrowDown": escapeBar('down'),
+                "ArrowLeft": escapeBar('left'),
+                "ArrowRight": escapeBar('right'),
+                "Enter": escapeBar('enter'),
+                "Ctrl-ArrowLeft": escapeBar('escape left'),
+                "Ctrl-alt-e": insertEmoji,
             }
         }
     },

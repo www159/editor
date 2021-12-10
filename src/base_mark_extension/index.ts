@@ -28,10 +28,10 @@ export const baseMarkExtensions: Extensions = [
             },
         },
         shortcutKey() {
-            const { editor, appliedStrict } = this
+            const { editor } = this
             const { em } = marksFromEditor(editor)
             return {
-                'Mod-i': appliedStrict(toggleMark(em)),
+                'Mod-i': toggleMark(em),
             }
         }
     },
@@ -49,10 +49,10 @@ export const baseMarkExtensions: Extensions = [
             },
         },
         shortcutKey() {
-            const { editor, appliedStrict } = this
+            const { editor } = this
             const { strong } = marksFromEditor(editor)
             return {
-                'Mod-b': appliedStrict(toggleMark(strong))
+                'Mod-b': toggleMark(strong)
             }
         }
     },
@@ -90,11 +90,11 @@ export const baseMarkExtensions: Extensions = [
             }
         },
         shortcutKey() {
-            const { editor, appliedStrict } = this
+            const { editor } = this
             const { under_line } = marksFromEditor(editor)
             // console.log('undeline', type)
             return {
-                'Mod-u': appliedStrict(toggleMark(under_line))
+                'Mod-u': toggleMark(under_line)
             }
         }
     }

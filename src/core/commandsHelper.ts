@@ -58,7 +58,6 @@ const executeCmdSelect = (executer: CmdExecuter): CmdExecuter => (props: Execute
         serial: executer(props, initTr),
         select: executeCmdSelect(executer)(props, initTr)
     }
-    console.log('select')
     for(let i = 0; i < cmds.length; i++) {
         if(cmds[i](cmdProps)) return true
     }
