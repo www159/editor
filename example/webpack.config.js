@@ -8,7 +8,7 @@ console.log('env',env)
 const config = {
     entry: [
         // 'react-hot-loader/patch',
-        path.resolve(__dirname, '..', 'indexvite.ts')
+        path.resolve(__dirname, '..', 'indexspec.ts')
     ],
     output: {
         path: path.resolve(__dirname, '..', 'doc'),

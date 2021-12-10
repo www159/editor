@@ -10,7 +10,7 @@ export default defineConfig({
         alias: {
             '@editor': resolve(__dirname, 'src'),
             '@public': resolve(__dirname, 'public'),
-            'chalk': resolve(__dirname, 'chalk')
+            'chalk': resolve(__dirname, 'asserts', 'chalk')
         },
         // extensions: [
         //     '.less'
