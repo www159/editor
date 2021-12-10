@@ -1,5 +1,6 @@
 import { ConsMark, Extensions } from "@editor/core";
-import { toggleMark } from "prosemirror-commands";
+import { marksFromEditor, nodesFromEditor } from "@editor/utils";
+import { toggleMark } from "@editor/core/unitCommands";
 import { MarkType, WrapAttrM } from "prosemirror-model";
 
 declare module '@editor/core' {
@@ -27,9 +28,10 @@ export const baseMarkExtensions: Extensions = [
             },
         },
         shortcutKey() {
-            const type = this.type as MarkType
+            const { editor, appliedStrict } = this
+            const { em } = marksFromEditor(editor)
             return {
-                'Mod-i': toggleMark(type),
+                'Mod-i': appliedStrict(toggleMark(em)),
             }
         }
     },
@@ -47,9 +49,10 @@ export const baseMarkExtensions: Extensions = [
             },
         },
         shortcutKey() {
-            const type = this.type as MarkType
+            const { editor, appliedStrict } = this
+            const { strong } = marksFromEditor(editor)
             return {
-                'Mod-b': toggleMark(type)
+                'Mod-b': appliedStrict(toggleMark(strong))
             }
         }
     },
@@ -87,10 +90,11 @@ export const baseMarkExtensions: Extensions = [
             }
         },
         shortcutKey() {
-            const type = this.type as MarkType
+            const { editor, appliedStrict } = this
+            const { under_line } = marksFromEditor(editor)
             // console.log('undeline', type)
             return {
-                'Mod-u': toggleMark(type),
+                'Mod-u': appliedStrict(toggleMark(under_line))
             }
         }
     }

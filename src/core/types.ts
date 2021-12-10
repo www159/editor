@@ -72,6 +72,7 @@ export type DispatchFunc = ((tr: Transaction<WSchema>) => void) | undefined
 
 export type InputRulesFunc = (this: {
     editor: Editor,
+    type: NodeType | MarkType | null
 }) => Array<InputRule<WSchema>>
 
 export type shortcutKeyFunc = (this: {
