@@ -1,6 +1,15 @@
 # 1.0.0 (2021-12-10)
 
 
+### Features
+
+* command reducer, task-list ([5506237](https://github.com/www159/editor/commit/5506237e1c8a4e9588af4d38728318cdb2772e08))
+
+
+
+# 1.0.0 (2021-12-10)
+
+
 
 # 1.0.0 (2021-11-28)
 
