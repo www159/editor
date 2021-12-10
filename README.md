@@ -8,7 +8,7 @@
 ## 测试报告：
 | Statements                  | Branches                | Functions                 | Lines             |
 | --------------------------- | ----------------------- | ------------------------- | ----------------- |
-| ![Statements](https://img.shields.io/badge/statements-65.45%25-red.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-33.09%25-red.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-58.93%25-red.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-67.24%25-red.svg?style=flat) |
+| ![Statements](https://img.shields.io/badge/statements-55.8%25-red.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-22.5%25-red.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-47.53%25-red.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-56.9%25-red.svg?style=flat) |
 
 
 
